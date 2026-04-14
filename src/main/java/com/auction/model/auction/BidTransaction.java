@@ -1,10 +1,10 @@
 package com.auction.model.auction;
 
-import com.auction.model.base.Entity;
-import com.auction.model.user.Bidder;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import com.auction.model.base.Entity;
+import com.auction.model.user.Bidder;
 
 public class BidTransaction extends Entity implements Comparable<BidTransaction> {
     private final Bidder bidder;
@@ -45,8 +45,6 @@ public class BidTransaction extends Entity implements Comparable<BidTransaction>
 
     @Override
     public String toString() {
-        return "%s bid %s at %s%s".formatted(
-                bidder.getUsername(), amount, bidTime, autoBid ? " [AUTO]" : ""
-        );
+        return "%s bid %s at %s%s".formatted(bidder.getUsername(), amount, bidTime, autoBid ? " [AUTO]" : "");
     }
 }
