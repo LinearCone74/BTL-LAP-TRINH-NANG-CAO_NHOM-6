@@ -14,7 +14,6 @@ public class AuctionApp extends Application {
     // ===== MENU CHÍNH =====
     public void showMainMenu(Stage stage) {
         Label title = new Label("He thong dau gia truc tuyen");
-
         Button auctionListBtn = new Button("Danh sach phien dau gia");
         Button productDetailBtn = new Button("Chi tiet san pham");
         Button liveBidBtn = new Button("Dau gia truc tiep");
