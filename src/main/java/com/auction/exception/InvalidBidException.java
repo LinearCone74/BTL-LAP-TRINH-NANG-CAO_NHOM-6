@@ -4,3 +4,5 @@ public class InvalidBidException extends AuctionException {
         super(message);
     }
 }
+
+// Ngoại lệ cho lỗi đấu giá

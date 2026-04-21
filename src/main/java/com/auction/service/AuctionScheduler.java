@@ -26,3 +26,5 @@ public class AuctionScheduler {
         executor.shutdown();
     }
 }
+
+// Công cụ tạo lịch đấu giá

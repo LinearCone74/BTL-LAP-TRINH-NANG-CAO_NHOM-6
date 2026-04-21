@@ -20,26 +20,26 @@ public final class ItemFactory {
                     description,
                     startingPrice,
                     seller,
-                    (String) extra.getOrDefault("brand", "Unknown"),
-                    (Integer) extra.getOrDefault("warrantyMonths", 0)
+                    (String) extra.getOrDefault("Thương hiệu", "Không xác định"),
+                    (Integer) extra.getOrDefault("Tháng bảo hành", 0)
             );
             case "art" -> new Art(
                     name,
                     description,
                     startingPrice,
                     seller,
-                    (String) extra.getOrDefault("artist", "Unknown"),
-                    (Integer) extra.getOrDefault("yearCreated", 0)
+                    (String) extra.getOrDefault("Họa sĩ", "Không xác định"),
+                    (Integer) extra.getOrDefault("Năm sáng tác", 0)
             );
             case "vehicle" -> new Vehicle(
                     name,
                     description,
                     startingPrice,
                     seller,
-                    (String) extra.getOrDefault("manufacturer", "Unknown"),
-                    (Integer) extra.getOrDefault("mileage", 0)
+                    (String) extra.getOrDefault("Nhà sản xuất", "Không xác định"),
+                    (Integer) extra.getOrDefault("Số km", 0)
             );
-            default -> throw new IllegalArgumentException("Unknown item type: " + type);
+            default -> throw new IllegalArgumentException("Loại hàng hóa không tồn tại: " + type);
         };
     }
 }

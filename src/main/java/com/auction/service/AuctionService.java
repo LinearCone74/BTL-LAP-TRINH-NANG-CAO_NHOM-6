@@ -45,7 +45,7 @@ public class AuctionService {
     public BidResult placeManualBid(String auctionId, Bidder bidder, BigDecimal amount) {
         Auction auction = getRequiredAuction(auctionId);
         return auction.placeBid(bidder, amount, false);
-    }
+    } // đặt giá thủ công
 
     public void registerAutoBid(String auctionId, AutoBidConfig config) {
         Auction auction = getRequiredAuction(auctionId);
@@ -58,6 +58,6 @@ public class AuctionService {
 
     public Auction getRequiredAuction(String auctionId) {
         return auctionRepository.findById(auctionId)
-                .orElseThrow(() -> new IllegalArgumentException("Auction not found: " + auctionId));
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy phiên đấu giá: " + auctionId));
     }
 }
