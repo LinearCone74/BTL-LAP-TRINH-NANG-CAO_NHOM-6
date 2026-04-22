@@ -18,21 +18,21 @@ public final class TimeUtils {
 
     public static long secondsBetween(LocalDateTime from, LocalDateTime to) {
         if (from == null || to == null) {
-            throw new IllegalArgumentException("Time values must not be null");
+            throw new IllegalArgumentException("Không xác định được thời gian");
         }
         return Duration.between(from, to).getSeconds();
     }
 
     public static boolean isExpired(LocalDateTime endTime) {
         if (endTime == null) {
-            throw new IllegalArgumentException("End time must not be null");
+            throw new IllegalArgumentException("Không xác định được thời gian kết thúc");
         }
         return LocalDateTime.now().isAfter(endTime);
     }
 
     public static boolean isInLastSeconds(LocalDateTime endTime, long thresholdSeconds) {
         if (endTime == null) {
-            throw new IllegalArgumentException("End time must not be null");
+            throw new IllegalArgumentException("Không xác định được thời gian kết thúc");
         }
         long secondsLeft = Duration.between(LocalDateTime.now(), endTime).getSeconds();
         return secondsLeft >= 0 && secondsLeft <= thresholdSeconds;
@@ -40,7 +40,7 @@ public final class TimeUtils {
 
     public static LocalDateTime extend(LocalDateTime time, long seconds) {
         if (time == null) {
-            throw new IllegalArgumentException("Time must not be null");
+            throw new IllegalArgumentException("Không xác định được thời gian");
         }
         return time.plusSeconds(seconds);
     }

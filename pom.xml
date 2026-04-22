@@ -5,14 +5,15 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.example</groupId>
-    <artifactId>dau_gia_truc_tuyen</artifactId>
+    <groupId>com.auction</groupId>
+    <artifactId>dau-gia-truc-tuyen</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <name>BTL-LAP-TRINH-NANG-CAO</name>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <javafx.version>21.0.2</javafx.version>
     </properties>
 
@@ -27,6 +28,12 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.1.0</version>
         </dependency>
     </dependencies>
 
@@ -47,7 +54,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>AuctionApp</mainClass>
+                    <mainClass>com.auction.AuctionApp</mainClass>
                 </configuration>
             </plugin>
         </plugins>
