@@ -59,7 +59,7 @@ public class AutoBidService {
         if (TimeUtils.isInLastSeconds(auction.getEndTime(), auction.getAntiSnipingThresholdSeconds())) {
             auction.setEndTime(TimeUtils.extend(auction.getEndTime(), auction.getAntiSnipingExtendSeconds()));
             auction.notifyObservers(AuctionEventType.AUCTION_EXTENDED,
-                    "Auction extended by " + auction.getAntiSnipingExtendSeconds() + " seconds");
+                    "Phiên đấu giá được gia hạn bởi " + auction.getAntiSnipingExtendSeconds() + " giây");
         }
     }
 
@@ -75,22 +75,22 @@ public class AutoBidService {
 
     private void validateConfig(Auction auction, AutoBidConfig config) {
         if (auction == null) {
-            throw new IllegalArgumentException("Auction must not be null");
+            throw new IllegalArgumentException("Phiên đấu giá không được phép trống");
         }
         if (config == null) {
-            throw new IllegalArgumentException("AutoBidConfig must not be null");
+            throw new IllegalArgumentException("Thông tin đấu giá tự động không được để trống");
         }
         if (config.getBidder() == null) {
-            throw new IllegalArgumentException("Bidder must not be null");
+            throw new IllegalArgumentException("Người đấu giá không được để trống");
         }
         if (config.getMaxBid() == null || config.getMaxBid().signum() <= 0) {
-            throw new IllegalArgumentException("Max bid must be greater than 0");
+            throw new IllegalArgumentException("Giá đấu tối đa phải lớn hơn 0");
         }
         if (config.getIncrement() == null || config.getIncrement().signum() <= 0) {
-            throw new IllegalArgumentException("Increment must be greater than 0");
+            throw new IllegalArgumentException("Bước nhảy phải lớn hơn 0");
         }
         if (config.getMaxBid().compareTo(auction.getCurrentPrice()) <= 0) {
-            throw new IllegalArgumentException("Max bid must be greater than current price");
+            throw new IllegalArgumentException("Giá đấu tối đa phải lớn hơn giá đấu hiện tại");
         }
     }
 
@@ -99,4 +99,6 @@ public class AutoBidService {
     }
 }
 
+
+// Đấu giá tự động
 

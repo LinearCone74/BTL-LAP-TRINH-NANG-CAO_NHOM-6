@@ -21,7 +21,7 @@ public class Bidder extends User {
 
     public void deposit(BigDecimal amount) {
         if (amount == null || amount.signum() <= 0) {
-            throw new IllegalArgumentException("Amount must be positive");
+            throw new IllegalArgumentException("Số tiền phải là số dương");
         }
         walletBalance = walletBalance.add(amount);
         touch();
@@ -29,12 +29,13 @@ public class Bidder extends User {
 
     public void withdraw(BigDecimal amount) {
         if (amount == null || amount.signum() <= 0) {
-            throw new IllegalArgumentException("Amount must be positive");
+            throw new IllegalArgumentException("Số tiền phải là số dương");
         }
         if (walletBalance.compareTo(amount) < 0) {
-            throw new IllegalArgumentException("Insufficient balance");
+            throw new IllegalArgumentException("Số dư không đủ");
         }
         walletBalance = walletBalance.subtract(amount);
         touch();
     }
 }
+

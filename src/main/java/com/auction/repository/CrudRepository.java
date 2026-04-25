@@ -9,3 +9,5 @@ public interface CrudRepository<T, ID> {
     List<T> findAll();
     void deleteById(ID id);
 }
+
+// CRUD (Create - Read - Update - Delete)

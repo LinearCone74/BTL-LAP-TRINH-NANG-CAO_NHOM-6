@@ -4,3 +4,5 @@ public class AuctionException extends RuntimeException {
         super(message);
     }
 }
+
+// Ngoại lệ khi tham gia đấu giá

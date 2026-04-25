@@ -8,7 +8,7 @@ public final class PasswordHasher {
 
     public static String hash(String rawPassword) {
         if (rawPassword == null || rawPassword.isBlank()) {
-            throw new IllegalArgumentException("Password must not be blank");
+            throw new IllegalArgumentException("Mật khẩu không được để trống");
         }
 
         try {
@@ -18,14 +18,16 @@ public final class PasswordHasher {
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("SHA-256 algorithm not available", e);
         }
-    }
+    }   // Thuật toán băm: Password (text) -> Hash SHA-256 -> String hex
+        // => lưu password an toàn (không lưu dưới dạng text)
+
 
     public static boolean matches(String rawPassword, String hashedPassword) {
         if (rawPassword == null || hashedPassword == null) {
             return false;
         }
         return hash(rawPassword).equals(hashedPassword);
-    }
+    } // ktra password đã giống với password lưu trong DB chưa
 
     private static String bytesToHex(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
@@ -33,5 +35,5 @@ public final class PasswordHasher {
             sb.append(String.format("%02x", b));
         }
         return sb.toString();
-    }
+    } // chuyển mảng byte sang chuỗi hex
 }

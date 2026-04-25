@@ -4,3 +4,4 @@ public class ValidationException extends AuctionException {
         super(message);
     }
 }
+

@@ -4,3 +4,4 @@ public class UnauthorizedException extends AuctionException {
         super(message);
     }
 }
+

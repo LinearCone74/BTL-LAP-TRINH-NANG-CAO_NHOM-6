@@ -112,14 +112,14 @@ public class Auction extends Entity {
         if (status == AuctionStatus.OPEN) {
             status = AuctionStatus.RUNNING;
             item.setStatus(ItemStatus.AUCTIONING);
-            notifyObservers(AuctionEventType.STATUS_CHANGED, "Auction started");
+            notifyObservers(AuctionEventType.STATUS_CHANGED, "Bắt đầu phiên đấu giá");
         }
     }
     public void cancelAuction() {
         if (status == AuctionStatus.OPEN || status == AuctionStatus.RUNNING) {
             status = AuctionStatus.CANCELED;
             item.setStatus(ItemStatus.CANCELED);
-            notifyObservers(AuctionEventType.STATUS_CHANGED, "Auction canceled");
+            notifyObservers(AuctionEventType.STATUS_CHANGED, "Hủy phiên đấu giá");
         }
     }
 
@@ -131,14 +131,14 @@ public class Auction extends Entity {
             } else {
                 item.setStatus(ItemStatus.READY);
             }
-            notifyObservers(AuctionEventType.AUCTION_FINISHED, "Auction finished");
+            notifyObservers(AuctionEventType.AUCTION_FINISHED, "Kết thúc phiên đấu giá");
         }
     }
 
     public void markPaid() {
         if (status == AuctionStatus.FINISHED) {
             status = AuctionStatus.PAID;
-            notifyObservers(AuctionEventType.STATUS_CHANGED, "Auction paid");
+            notifyObservers(AuctionEventType.STATUS_CHANGED, "Đã thanh toán");
         }
     }
 
@@ -159,25 +159,25 @@ public class Auction extends Entity {
             currentPrice = amount;
             highestBidder = bidder;
             item.setCurrentHighestPrice(amount);
-            notifyObservers(AuctionEventType.NEW_BID,bidder.getUsername() + " placed bid: " + amount + (autoBid ? " [AUTO]" : ""));
-            return new BidResult(true, "Bid placed successfully");
+            notifyObservers(AuctionEventType.NEW_BID,bidder.getUsername() + " Đã đặt giá: " + amount + (autoBid ? " [AUTO]" : ""));
+            return new BidResult(true, "Đã đặt giá thành công");
         } finally {
             bidLock.unlock();
         }
     }
     private void validateBid(BigDecimal amount, Bidder bidder) {
         if (status != AuctionStatus.RUNNING) {
-            throw new AuctionClosedException("Auction is not running");
+            throw new AuctionClosedException("Phiên đấu giá không diễn ra");
         }
         if (isExpired()) {
             status = AuctionStatus.FINISHED;
-            throw new AuctionClosedException("Auction already ended");
+            throw new AuctionClosedException("Phiên đấu giá đã kết thúc");
         }
         if (amount == null || amount.compareTo(currentPrice) <= 0) {
-            throw new InvalidBidException("Bid must be higher than current price");
+            throw new InvalidBidException("Cần phải đặt giá cao hơn giá hiện tại");
         }
         if (highestBidder != null && highestBidder.getId().equals(bidder.getId())) {
-            throw new InvalidBidException("Current leader cannot bid again immediately");
+            throw new InvalidBidException("Người ra giá cao nhất không thế đặt giá lại ngay lập tức");
         }
     }
 }  

@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.auction.controller.DashboardController"
+            prefWidth="1400"
+            prefHeight="860"
+            styleClass="app-root">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="16" styleClass="topbar">
+            <padding>
+                <Insets top="16" right="22" bottom="16" left="22"/>
+            </padding>
+            <children>
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="AuctionHub Dashboard" styleClass="brand-title"/>
+                        <Label fx:id="welcomeLabel" text="Xin chào" styleClass="page-subtitle"/>
+                    </children>
+                </VBox>
+                <Button text="Làm mới" onAction="#handleRefresh" styleClass="secondary-button"/>
+                <Button text="Đăng xuất" onAction="#handleLogout" styleClass="danger-button"/>
+            </children>
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.34,0.68">
+            <items>
+
+                <VBox spacing="14" styleClass="panel-section">
+                    <padding>
+                        <Insets top="18" right="18" bottom="18" left="18"/>
+                    </padding>
+                    <children>
+                        <Label text="Danh sách phiên đấu giá" styleClass="section-title"/>
+                        <HBox spacing="10">
+                            <children>
+                                <TextField fx:id="searchField" promptText="Tìm theo tên sản phẩm" HBox.hgrow="ALWAYS"/>
+                                <ChoiceBox fx:id="statusFilterChoiceBox" prefWidth="160.0"/>
+                                <Button text="Lọc" onAction="#handleFilterAuctions" styleClass="primary-button"/>
+                            </children>
+                        </HBox>
+                        <TableView fx:id="auctionTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colAuctionItem" text="Sản phẩm" prefWidth="180.0"/>
+                                <TableColumn fx:id="colAuctionSeller" text="Seller" prefWidth="110.0"/>
+                                <TableColumn fx:id="colAuctionCurrentPrice" text="Giá hiện tại" prefWidth="120.0"/>
+                                <TableColumn fx:id="colAuctionStatus" text="Trạng thái" prefWidth="110.0"/>
+                                <TableColumn fx:id="colAuctionEndTime" text="Kết thúc" prefWidth="150.0"/>
+                            </columns>
+                        </TableView>
+                    </children>
+                </VBox>
+
+                <VBox spacing="14" styleClass="panel-section">
+                    <padding>
+                        <Insets top="18" right="18" bottom="18" left="18"/>
+                    </padding>
+                    <children>
+                        <Label text="Chi tiết sản phẩm &amp; đấu giá trực tiếp" styleClass="section-title"/>
+
+                        <GridPane hgap="10" vgap="10">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="35"/>
+                                <ColumnConstraints percentWidth="65"/>
+                            </columnConstraints>
+                            <children>
+                                <Label text="Tên sản phẩm" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="field-label"/>
+                                <Label fx:id="itemNameLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                                <Label text="Mô tả" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="field-label"/>
+                                <Label fx:id="itemDescriptionLabel" GridPane.rowIndex="1" GridPane.columnIndex="1" wrapText="true"/>
+
+                                <Label text="Giá khởi điểm" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="field-label"/>
+                                <Label fx:id="startingPriceLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                                <Label text="Giá cao nhất" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="field-label"/>
+                                <Label fx:id="currentPriceLabel" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="price-highlight"/>
+
+                                <Label text="Người dẫn đầu" GridPane.rowIndex="4" GridPane.columnIndex="0" styleClass="field-label"/>
+                                <Label fx:id="leaderLabel" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                                <Label text="Bắt đầu" GridPane.rowIndex="5" GridPane.columnIndex="0" styleClass="field-label"/>
+                                <Label fx:id="startTimeLabel" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                                <Label text="Kết thúc" GridPane.rowIndex="6" GridPane.columnIndex="0" styleClass="field-label"/>
+                                <Label fx:id="endTimeLabel" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+                                <Label text="Trạng thái" GridPane.rowIndex="7" GridPane.columnIndex="0" styleClass="field-label"/>
+                                <Label fx:id="auctionStatusLabel" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                            </children>
+                        </GridPane>
+
+                        <Separator/>
+
+                        <Label text="Realtime bidding" styleClass="section-title"/>
+                        <HBox spacing="10">
+                            <children>
+                                <TextField fx:id="manualBidField" promptText="Nhập giá muốn đặt" HBox.hgrow="ALWAYS"/>
+                                <Button text="Đặt giá" onAction="#handlePlaceBid" styleClass="primary-button"/>
+                            </children>
+                        </HBox>
+
+                        <HBox spacing="10">
+                            <children>
+                                <TextField fx:id="autoBidMaxField" promptText="Max bid" HBox.hgrow="ALWAYS"/>
+                                <TextField fx:id="autoBidIncrementField" promptText="Increment" HBox.hgrow="ALWAYS"/>
+                                <Button text="Đăng ký Auto-Bid" onAction="#handleRegisterAutoBid" styleClass="secondary-button"/>
+                            </children>
+                        </HBox>
+
+                        <Label fx:id="bidMessageLabel" styleClass="success-label" wrapText="true"/>
+
+                        <Label text="Lịch sử bid" styleClass="section-title"/>
+                        <TableView fx:id="bidHistoryTable" prefHeight="180">
+                            <columns>
+                                <TableColumn fx:id="colBidTime" text="Thời gian" prefWidth="150.0"/>
+                                <TableColumn fx:id="colBidder" text="Bidder" prefWidth="130.0"/>
+                                <TableColumn fx:id="colBidAmount" text="Số tiền" prefWidth="120.0"/>
+                                <TableColumn fx:id="colBidType" text="Loại" prefWidth="100.0"/>
+                            </columns>
+                        </TableView>
+
+                        <Label text="Bid History Visualization" styleClass="section-title"/>
+                        <LineChart fx:id="priceChart"
+                                   animated="false"
+                                   createSymbols="true"
+                                   legendVisible="false"
+                                   prefHeight="220">
+                            <xAxis>
+                                <NumberAxis fx:id="xAxis" label="Mốc bid"/>
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis fx:id="yAxis" label="Giá hiện tại"/>
+                            </yAxis>
+                        </LineChart>
+                    </children>
+                </VBox>
+
+                <TabPane fx:id="managementTabPane" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+
+                        <Tab text="Seller Management">
+                            <content>
+                                <VBox spacing="14" styleClass="panel-section">
+                                    <padding>
+                                        <Insets top="18" right="18" bottom="18" left="18"/>
+                                    </padding>
+                                    <children>
+                                        <Label text="Quản lý sản phẩm (Seller)" styleClass="section-title"/>
+
+                                        <GridPane hgap="10" vgap="10">
+                                            <columnConstraints>
+                                                <ColumnConstraints percentWidth="35"/>
+                                                <ColumnConstraints percentWidth="65"/>
+                                            </columnConstraints>
+                                            <children>
+                                                <Label text="Loại sản phẩm" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="field-label"/>
+                                                <ChoiceBox fx:id="itemTypeChoiceBox" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                                                <Label text="Tên" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="field-label"/>
+                                                <TextField fx:id="sellerItemNameField" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                                                <Label text="Mô tả" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="field-label"/>
+                                                <TextArea fx:id="sellerItemDescriptionArea" GridPane.rowIndex="2" GridPane.columnIndex="1" prefRowCount="3"/>
+
+                                                <Label text="Giá khởi điểm" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="field-label"/>
+                                                <TextField fx:id="sellerStartingPriceField" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                                                <Label text="Bắt đầu" GridPane.rowIndex="4" GridPane.columnIndex="0" styleClass="field-label"/>
+                                                <TextField fx:id="sellerStartTimeField" GridPane.rowIndex="4" GridPane.columnIndex="1" promptText="yyyy-MM-dd HH:mm"/>
+
+                                                <Label text="Kết thúc" GridPane.rowIndex="5" GridPane.columnIndex="0" styleClass="field-label"/>
+                                                <TextField fx:id="sellerEndTimeField" GridPane.rowIndex="5" GridPane.columnIndex="1" promptText="yyyy-MM-dd HH:mm"/>
+
+                                                <Label text="Thuộc tính thêm" GridPane.rowIndex="6" GridPane.columnIndex="0" styleClass="field-label"/>
+                                                <TextArea fx:id="sellerMetadataArea" GridPane.rowIndex="6" GridPane.columnIndex="1" prefRowCount="3" promptText="Ví dụ: Thương hiệu=MSI; Bảo hành=24"/>
+                                            </children>
+                                        </GridPane>
+
+                                        <HBox spacing="10">
+                                            <children>
+                                                <Button text="Thêm sản phẩm" onAction="#handleCreateItem" styleClass="primary-button"/>
+                                                <Button text="Cập nhật" onAction="#handleUpdateItem" styleClass="secondary-button"/>
+                                                <Button text="Xóa" onAction="#handleDeleteItem" styleClass="danger-button"/>
+                                            </children>
+                                        </HBox>
+
+                                        <Label fx:id="sellerMessageLabel" styleClass="success-label" wrapText="true"/>
+
+                                        <TableView fx:id="sellerItemTable" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="colSellerItemName" text="Tên" prefWidth="180.0"/>
+                                                <TableColumn fx:id="colSellerItemType" text="Loại" prefWidth="110.0"/>
+                                                <TableColumn fx:id="colSellerItemPrice" text="Giá khởi điểm" prefWidth="130.0"/>
+                                            </columns>
+                                        </TableView>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </Tab>
+
+                        <Tab text="Admin Management">
+                            <content>
+                                <VBox spacing="14" styleClass="panel-section">
+                                    <padding>
+                                        <Insets top="18" right="18" bottom="18" left="18"/>
+                                    </padding>
+                                    <children>
+                                        <Label text="Quản lý người dùng (Admin)" styleClass="section-title"/>
+                                        <Label fx:id="adminMessageLabel" styleClass="success-label" wrapText="true"/>
+
+                                        <TableView fx:id="userTable" VBox.vgrow="ALWAYS">
+                                            <columns>
+                                                <TableColumn fx:id="colUsername" text="Username" prefWidth="150.0"/>
+                                                <TableColumn fx:id="colFullName" text="Họ tên" prefWidth="170.0"/>
+                                                <TableColumn fx:id="colEmail" text="Email" prefWidth="190.0"/>
+                                                <TableColumn fx:id="colRole" text="Vai trò" prefWidth="100.0"/>
+                                                <TableColumn fx:id="colUserStatus" text="Trạng thái" prefWidth="110.0"/>
+                                            </columns>
+                                        </TableView>
+
+                                        <HBox spacing="10">
+                                            <children>
+                                                <Button text="Duyệt tài khoản" onAction="#handleApproveUser" styleClass="primary-button"/>
+                                                <Button text="Khóa tài khoản" onAction="#handleLockUser" styleClass="danger-button"/>
+                                                <Button text="Xóa auction chọn" onAction="#handleRemoveAuction" styleClass="secondary-button"/>
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </content>
+                        </Tab>
+
+                    </tabs>
+                </TabPane>
+
+            </items>
+        </SplitPane>
+    </center>
+
+</BorderPane>
