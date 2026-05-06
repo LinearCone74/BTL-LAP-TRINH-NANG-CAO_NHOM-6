@@ -96,7 +96,7 @@ public class AppContext {
                 auctionScheduler
         );
 
-        context.seedData();
+//        context.seedData();
         auctionScheduler.start();
         return context;
     }
