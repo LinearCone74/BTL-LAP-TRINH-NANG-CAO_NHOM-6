@@ -10,6 +10,7 @@ import com.auction.model.user.Seller;
 import com.auction.model.user.User;
 import com.auction.repository.AuctionRepository;
 import com.auction.repository.ItemRepository;
+import com.auction.repository.JdbcUserRepository;
 import com.auction.repository.UserRepository;
 import com.auction.repository.memory.InMemoryAuctionRepository;
 import com.auction.repository.memory.InMemoryItemRepository;
@@ -69,7 +70,7 @@ public class AppContext {
     }
 
     public static AppContext bootstrap(Stage primaryStage) {
-        UserRepository userRepository = new InMemoryUserRepository();
+        UserRepository userRepository = new JdbcUserRepository();
         ItemRepository itemRepository = new InMemoryItemRepository();
         AuctionRepository auctionRepository = new InMemoryAuctionRepository();
 
