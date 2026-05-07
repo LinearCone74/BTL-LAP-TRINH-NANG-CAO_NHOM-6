@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.auction.controller.LoginController"
+            prefWidth="1200" prefHeight="800"
+            styleClass="app-root">
+
+    <center>
+        <HBox alignment="CENTER" spacing="36">
+            <children>
+
+                <VBox prefWidth="420" spacing="18" styleClass="glass-panel">
+                    <padding>
+                        <Insets top="36" right="36" bottom="36" left="36"/>
+                    </padding>
+
+                    <children>
+
+                        <!-- Title -->
+                        <Label text="AuctionHub" styleClass="brand-title"/>
+                        <Label text="Đăng nhập hệ thống đấu giá trực tuyến"
+                               styleClass="page-subtitle"
+                               wrapText="true"/>
+
+                        <!-- Username -->
+                        <VBox spacing="8">
+                            <children>
+                                <Label text="Tên đăng nhập" styleClass="field-label"/>
+                                <TextField fx:id="usernameField"
+                                           promptText="Nhập username"/>
+                            </children>
+                        </VBox>
+
+                        <!-- Password -->
+                        <VBox spacing="8">
+                            <children>
+                                <Label text="Mật khẩu" styleClass="field-label"/>
+                                <PasswordField fx:id="passwordField"
+                                               promptText="Nhập mật khẩu"/>
+                            </children>
+                        </VBox>
+
+                        <!-- Role -->
+                        <VBox spacing="8">
+                            <children>
+                                <Label text="Vai trò" styleClass="field-label"/>
+                                <ComboBox fx:id="roleComboBox"
+                                          promptText="Chọn vai trò"
+                                          maxWidth="1.7976931348623157E308"/>
+                            </children>
+                        </VBox>
+
+                        <!-- Message -->
+                        <Label fx:id="messageLabel"
+                               styleClass="error-label"
+                               wrapText="true"/>
+
+                        <!-- Buttons -->
+                        <HBox spacing="12">
+                            <children>
+                                <Button text="Đăng nhập"
+                                        onAction="#handleLogin"
+                                        styleClass="primary-button"
+                                        HBox.hgrow="ALWAYS"
+                                        maxWidth="1.7976931348623157E308"/>
+
+                                <Button text="Xóa"
+                                        onAction="#handleClear"
+                                        styleClass="secondary-button"
+                                        HBox.hgrow="ALWAYS"
+                                        maxWidth="1.7976931348623157E308"/>
+                            </children>
+                        </HBox>
+
+                        <Separator/>
+
+                        <!-- Register -->
+                        <HBox alignment="CENTER_LEFT" spacing="8">
+                            <children>
+                                <Label text="Chưa có tài khoản?"
+                                       styleClass="muted-text"/>
+                                <Hyperlink text="Đăng ký ngay"
+                                           onAction="#goToRegister"/>
+                            </children>
+                        </HBox>
+
+                    </children>
+                </VBox>
+
+            </children>
+        </HBox>
+    </center>
+
+</BorderPane>
