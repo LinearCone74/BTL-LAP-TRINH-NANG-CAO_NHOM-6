@@ -18,21 +18,31 @@
                 <VBox spacing="18" styleClass="login-brand">
                     <children>
                         <Label text="🎓" styleClass="login-icon"/>
-                        <Label text="AuctionHub" styleClass="login-title"/>
+                        <Label text="AuctionHub"
+                               styleClass="login-title"
+                               maxWidth="Infinity"/>
                         <Label text="Hệ thống đấu giá thông minh"
                                wrapText="true"
                                styleClass="login-subtitle"/>
                         <Pane VBox.vgrow="ALWAYS"/>
-                        <Label text="Mua nhanh • Bán dễ • Đấu giá vui"
+                        <Label text="Bid smart • Trade fast • Win better"
                                styleClass="login-slogan"/>
                     </children>
                 </VBox>
 
                 <VBox spacing="16" styleClass="login-form">
                     <children>
-                        <Label text="Đăng nhập" styleClass="form-title"/>
-                        <Label text="Vui lòng nhập thông tin để tiếp tục"
-                               styleClass="page-subtitle"/>
+                        <VBox spacing="4" styleClass="login-header">
+                            <children>
+
+                                <Label text="Đăng nhập"
+                                       styleClass="form-title"/>
+
+                                <Label text="Truy cập hệ thống AuctionHub"
+                                       styleClass="form-subtitle"/>
+
+                            </children>
+                        </VBox>
 
                         <VBox spacing="7">
                             <children>
