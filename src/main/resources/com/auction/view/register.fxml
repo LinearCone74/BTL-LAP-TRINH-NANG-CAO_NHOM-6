@@ -1,23 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auction.controller.RegisterController" prefWidth="1200" prefHeight="800" styleClass="app-root">
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.auction.controller.RegisterController"
+            prefWidth="1200"
+            prefHeight="800"
+            styleClass="app-root">
+
     <center>
         <HBox alignment="CENTER" spacing="36">
             <children>
                 <VBox prefWidth="460" spacing="18" styleClass="glass-panel">
-                    <padding><Insets top="36" right="36" bottom="36" left="36"/></padding>
+                    <padding>
+                        <Insets top="36" right="36" bottom="36" left="36"/>
+                    </padding>
+
                     <children>
                         <Label text="Tạo tài khoản mới" styleClass="brand-title"/>
-                        <Label text="Đăng ký Bidder hoặc Seller để tham gia hệ thống đấu giá" styleClass="page-subtitle" wrapText="true"/>
-                        <VBox spacing="8"><children><Label text="Tên đăng nhập" styleClass="field-label"/><TextField fx:id="usernameField" promptText="Nhập username"/></children></VBox>
-                        <VBox spacing="8"><children><Label text="Mật khẩu" styleClass="field-label"/><PasswordField fx:id="passwordField" promptText="Nhập mật khẩu"/></children></VBox>
-                        <VBox spacing="8"><children><Label text="Họ và tên" styleClass="field-label"/><TextField fx:id="fullNameField" promptText="Nhập họ tên"/></children></VBox>
-                        <VBox spacing="8"><children><Label text="Email" styleClass="field-label"/><TextField fx:id="emailField" promptText="Nhập email"/></children></VBox>
-                        <VBox spacing="8"><children><Label text="Vai trò" styleClass="field-label"/><ComboBox fx:id="roleComboBox" promptText="Chọn vai trò" maxWidth="1.7976931348623157E308"/></children></VBox>
+                        <Label text="Đăng ký Bidder hoặc Seller để tham gia hệ thống đấu giá"
+                               styleClass="page-subtitle"
+                               wrapText="true"/>
+
+                        <VBox spacing="8">
+                            <children>
+                                <Label text="Tên đăng nhập" styleClass="field-label"/>
+                                <TextField fx:id="usernameField" promptText="Nhập username"/>
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="8">
+                            <children>
+                                <Label text="Mật khẩu" styleClass="field-label"/>
+                                <PasswordField fx:id="passwordField" promptText="Nhập mật khẩu"/>
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="8">
+                            <children>
+                                <Label text="Họ và tên" styleClass="field-label"/>
+                                <TextField fx:id="fullNameField" promptText="Nhập họ tên"/>
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="8">
+                            <children>
+                                <Label text="Email" styleClass="field-label"/>
+                                <TextField fx:id="emailField" promptText="Nhập email"/>
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="8">
+                            <children>
+                                <Label text="Vai trò" styleClass="field-label"/>
+                                <ComboBox fx:id="roleComboBox"
+                                          promptText="Chọn vai trò"
+                                          maxWidth="1.7976931348623157E308"/>
+                            </children>
+                        </VBox>
+
                         <Label fx:id="messageLabel" styleClass="success-label" wrapText="true"/>
-                        <HBox spacing="12"><children><Button text="Đăng ký" onAction="#handleRegister" styleClass="primary-button" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308"/><Button text="Về đăng nhập" onAction="#goToLogin" styleClass="secondary-button" HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308"/></children></HBox>
+
+                        <HBox spacing="12">
+                            <children>
+                                <Button text="Đăng ký"
+                                        onAction="#handleRegister"
+                                        styleClass="primary-button"
+                                        HBox.hgrow="ALWAYS"
+                                        maxWidth="1.7976931348623157E308"/>
+                                <Button text="Về đăng nhập"
+                                        onAction="#goToLogin"
+                                        styleClass="secondary-button"
+                                        HBox.hgrow="ALWAYS"
+                                        maxWidth="1.7976931348623157E308"/>
+                            </children>
+                        </HBox>
                     </children>
                 </VBox>
             </children>
