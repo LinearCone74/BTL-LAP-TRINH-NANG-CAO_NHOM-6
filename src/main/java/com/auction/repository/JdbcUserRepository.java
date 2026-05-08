@@ -23,13 +23,17 @@ public class JdbcUserRepository implements UserRepository {
         try {
             Connection conn = DBConnection.getConnection();
 
-            String sql = "INSERT INTO users(username, password, role) VALUES (?, ?, ?)";
+            String sql =
+                    "INSERT INTO users(username, password, full_name, email, role, active) VALUES (?, ?, ?, ?, ?, ?)";
 
             PreparedStatement ps = conn.prepareStatement(sql);
 
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getPasswordHash());
-            ps.setString(3, user.getRole().name());
+            ps.setString(3, user.getFullName());
+            ps.setString(4, user.getEmail());
+            ps.setString(5, user.getRole().name());
+            ps.setBoolean(6, user.isActive());
 
             ps.executeUpdate();
 
@@ -71,14 +75,17 @@ public class JdbcUserRepository implements UserRepository {
     private User createUserFromResultSet(ResultSet rs) throws Exception {
         String username = rs.getString("username");
         String password = rs.getString("password");
+        String fullName = rs.getString("full_name");
+        String email = rs.getString("email");
         String role = rs.getString("role");
 
         return switch (Role.valueOf(role)) {
-            case BIDDER -> new Bidder(username, password, username, "");
-            case SELLER -> new Seller(username, password, username, "");
-            case ADMIN -> new Admin(username, password, username, "");
+            case BIDDER -> new Bidder(username, password, fullName, email);
+            case SELLER -> new Seller(username, password, fullName, email);
+            case ADMIN -> new Admin(username, password, fullName, email);
         };
     }
+
 
     @Override
     public Optional<User> findById(String id) {
