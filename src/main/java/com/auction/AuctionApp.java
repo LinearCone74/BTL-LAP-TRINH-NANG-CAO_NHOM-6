@@ -3,6 +3,7 @@ package com.auction;
 import com.auction.app.AppContext;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 public class AuctionApp extends Application {
     @Override
@@ -12,6 +13,13 @@ public class AuctionApp extends Application {
         primaryStage.setTitle("AuctionHub - Hệ thống đấu giá trực tuyến");
         primaryStage.setMinWidth(1200);
         primaryStage.setMinHeight(780);
+
+        primaryStage.getIcons().add(
+                new Image(
+                        getClass().getResourceAsStream("/com/auction/icon.png")
+                )
+        );
+
         primaryStage.show();
     }
 
