@@ -12,7 +12,7 @@ public class AuctionApp extends Application {
         appContext.getNavigator().showLogin();
         primaryStage.setTitle("AuctionHub - Hệ thống đấu giá trực tuyến");
         primaryStage.setMinWidth(1200);
-        primaryStage.setMinHeight(780);
+        primaryStage.setMinHeight(680);
 
         primaryStage.getIcons().add(
                 new Image(
