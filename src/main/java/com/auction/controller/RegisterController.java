@@ -1,9 +1,8 @@
 package com.auction.controller;
 
 import com.auction.app.AppContext;
+import com.auction.exception.AuctionException;
 import com.auction.model.user.Role;
-import com.auction.util.PasswordHasher;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -24,17 +23,36 @@ public class RegisterController {
         this.appContext = appContext;
     }
 
-    @FXML public void initialize() { roleComboBox.setItems(FXCollections.observableArrayList(Role.BIDDER, Role.SELLER)); }
+    @FXML
+    public void initialize() {
+        roleComboBox.getItems().setAll(Role.BIDDER, Role.SELLER);
+        roleComboBox.getSelectionModel().select(Role.BIDDER);
+        messageLabel.setText("");
+    }
 
     @FXML
     private void handleRegister() {
         try {
-            appContext.getAuthService().register(usernameField.getText(), PasswordHasher.hash(passwordField.getText()), fullNameField.getText(), emailField.getText(), roleComboBox.getValue());
-            messageLabel.setText("Đăng ký thành công. Hãy đăng nhập để tiếp tục.");
-        } catch (Exception ex) {
+            appContext.getAuthService().register(
+                    usernameField.getText(),
+                    passwordField.getText(),
+                    fullNameField.getText(),
+                    emailField.getText(),
+                    roleComboBox.getValue()
+            );
+
+            messageLabel.getStyleClass().setAll("success-label");
+            messageLabel.setText("Đăng ký thành công. Tài khoản cần Admin duyệt trước khi đăng nhập.");
+            passwordField.clear();
+
+        } catch (AuctionException | IllegalArgumentException ex) {
+            messageLabel.getStyleClass().setAll("error-label");
             messageLabel.setText(ex.getMessage());
         }
     }
 
-    @FXML private void goToLogin() { appContext.getNavigator().showLogin(); }
+    @FXML
+    private void goToLogin() {
+        appContext.getNavigator().showLogin();
+    }
 }

@@ -1,19 +1,17 @@
 package com.auction.service;
+
+import com.auction.exception.InvalidBidException;
+import com.auction.model.auction.Auction;
+import com.auction.model.auction.AutoBidConfig;
+import com.auction.model.user.Bidder;
+
 import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import com.auction.model.auction.Auction;
-import com.auction.model.auction.AutoBidConfig;
-import com.auction.model.auction.BidResult;
-import com.auction.model.notification.AuctionEventType;
-import com.auction.model.user.Bidder;
-import com.auction.util.TimeUtils;
+import java.util.Objects;
 
 public class AutoBidService {
-
     public void register(Auction auction, AutoBidConfig config) {
         validateConfig(auction, config);
         auction.registerAutoBid(config);
@@ -30,67 +28,86 @@ public class AutoBidService {
     public AutoBidConfig getByBidderId(Auction auction, String bidderId) {
         return getConfigs(auction).get(bidderId);
     }
+
     public void process(Auction auction) {
-        while (true) {
-            Bidder currentLeader = auction.getHighestBidder();
-            BigDecimal currentPrice = auction.getCurrentPrice();
+        Objects.requireNonNull(auction);
 
-            List<AutoBidConfig> candidates = getEligibleConfigs(auction, currentLeader, currentPrice);
-            if (candidates.isEmpty()) {
-                break;
-            }
+        Bidder currentLeader = auction.getHighestBidder();
+        BigDecimal currentPrice = auction.getCurrentPrice();
 
-            AutoBidConfig selected = candidates.get(0);
-            BigDecimal nextBid = currentPrice.add(selected.getIncrement());
+        List<AutoBidConfig> eligibleConfigs =
+                getEligibleConfigs(auction, currentLeader, currentPrice);
 
-            if (nextBid.compareTo(selected.getMaxBid()) > 0) {
-                break;
-            }
+        if (eligibleConfigs.isEmpty()) {
+            return;
+        }
 
-            BidResult result = auction.placeBid(selected.getBidder(), nextBid, true);
-            if (!result.success()) {
-                break;
-            }
+        AutoBidConfig winner = eligibleConfigs.get(0);
 
-            applyAntiSniping(auction);
+        BigDecimal nextAmount =
+                currentPrice.add(winner.getIncrement()).min(winner.getMaxBid());
+
+        if (nextAmount.compareTo(currentPrice) > 0) {
+            auction.placeBid(winner.getBidder(), nextAmount, true);
         }
     }
+
     public void applyAntiSniping(Auction auction) {
-        if (TimeUtils.isInLastSeconds(auction.getEndTime(), auction.getAntiSnipingThresholdSeconds())) {
-            auction.setEndTime(TimeUtils.extend(auction.getEndTime(), auction.getAntiSnipingExtendSeconds()));
-            auction.notifyObservers(AuctionEventType.AUCTION_EXTENDED,
-                    "Phiên đấu giá được gia hạn bởi " + auction.getAntiSnipingExtendSeconds() + " giây");
+        if (auction == null) {
+            return;
+        }
+
+        long remaining = java.time.Duration
+                .between(java.time.LocalDateTime.now(), auction.getEndTime())
+                .toSeconds();
+
+        if (remaining >= 0
+                && remaining <= auction.getAntiSnipingThresholdSeconds()) {
+            auction.setEndTime(
+                    auction.getEndTime()
+                            .plusSeconds(auction.getAntiSnipingExtendSeconds())
+            );
         }
     }
 
-    public List<AutoBidConfig> getEligibleConfigs(Auction auction, Bidder excludeBidder, BigDecimal currentPrice) {
-        return getConfigs(auction).values()
+    public List<AutoBidConfig> getEligibleConfigs(Auction auction,
+                                                  Bidder currentLeader,
+                                                  BigDecimal currentPrice) {
+        return getConfigs(auction)
+                .values()
                 .stream()
-                .filter(config -> excludeBidder == null
-                        || !config.getBidder().getId().equals(excludeBidder.getId()))
-                .filter(config -> currentPrice.add(config.getIncrement()).compareTo(config.getMaxBid()) <= 0)
-                .sorted(Comparator.comparing(AutoBidConfig::getRegisteredAt))
-                .collect(Collectors.toList());
+                .filter(config ->
+                        currentLeader == null
+                                || !config.getBidder().getId()
+                                .equals(currentLeader.getId())
+                )
+                .filter(config -> config.getMaxBid().compareTo(currentPrice) > 0)
+                .sorted(
+                        Comparator.comparing(AutoBidConfig::getMaxBid)
+                                .reversed()
+                                .thenComparing(AutoBidConfig::getRegisteredAt)
+                )
+                .toList();
     }
 
     private void validateConfig(Auction auction, AutoBidConfig config) {
-        if (auction == null) {
-            throw new IllegalArgumentException("Phiên đấu giá không được phép trống");
+        if (auction == null || config == null || config.getBidder() == null) {
+            throw new InvalidBidException("Auto-Bid không hợp lệ.");
         }
-        if (config == null) {
-            throw new IllegalArgumentException("Thông tin đấu giá tự động không được để trống");
+
+        if (config.getIncrement() == null
+                || config.getIncrement().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new InvalidBidException("Increment phải lớn hơn 0.");
         }
-        if (config.getBidder() == null) {
-            throw new IllegalArgumentException("Người đấu giá không được để trống");
+
+        if (config.getMaxBid() == null
+                || config.getMaxBid().compareTo(auction.getCurrentPrice()) <= 0) {
+            throw new InvalidBidException("Max bid phải lớn hơn giá hiện tại.");
         }
-        if (config.getMaxBid() == null || config.getMaxBid().signum() <= 0) {
-            throw new IllegalArgumentException("Giá đấu tối đa phải lớn hơn 0");
-        }
-        if (config.getIncrement() == null || config.getIncrement().signum() <= 0) {
-            throw new IllegalArgumentException("Bước nhảy phải lớn hơn 0");
-        }
-        if (config.getMaxBid().compareTo(auction.getCurrentPrice()) <= 0) {
-            throw new IllegalArgumentException("Giá đấu tối đa phải lớn hơn giá đấu hiện tại");
+
+        if (config.getBidder().getWalletBalance()
+                .compareTo(config.getMaxBid()) < 0) {
+            throw new InvalidBidException("Số dư ví không đủ cho max bid.");
         }
     }
 
@@ -98,7 +115,3 @@ public class AutoBidService {
         return auction.getAutoBidConfigs();
     }
 }
-
-
-// Đấu giá tự động
-
