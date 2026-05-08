@@ -14,21 +14,39 @@
             styleClass="app-root">
 
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="16" styleClass="topbar">
-            <padding>
-                <Insets top="16" right="22" bottom="16" left="22"/>
-            </padding>
+        <VBox styleClass="window-frame-top">
             <children>
-                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10" styleClass="window-bar">
+                    <padding>
+                        <Insets top="8" right="12" bottom="8" left="12"/>
+                    </padding>
                     <children>
-                        <Label text="AuctionHub Dashboard" styleClass="brand-title"/>
-                        <Label fx:id="welcomeLabel" text="Xin chào" styleClass="page-subtitle"/>
+                        <Label text="🎓 AuctionHub Student" styleClass="window-title"/>
+                        <Label text="  •  Đấu giá trực tuyến" styleClass="window-subtitle"/>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button text="—" styleClass="window-min-button"/>
+                        <Button text="□" styleClass="window-max-button"/>
+                        <Button text="✕" onAction="#handleCloseApp" styleClass="window-close-button"/>
                     </children>
-                </VBox>
-                <Button text="Làm mới" onAction="#handleRefresh" styleClass="secondary-button"/>
-                <Button text="Đăng xuất" onAction="#handleLogout" styleClass="danger-button"/>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="16" styleClass="topbar">
+                    <padding>
+                        <Insets top="16" right="22" bottom="16" left="22"/>
+                    </padding>
+                    <children>
+                        <VBox spacing="4" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label text="AuctionHub Dashboard" styleClass="brand-title"/>
+                                <Label fx:id="welcomeLabel" text="Xin chào sinh viên" styleClass="page-subtitle"/>
+                            </children>
+                        </VBox>
+                        <Button text="Làm mới" onAction="#handleRefresh" styleClass="secondary-button"/>
+                        <Button text="Đăng xuất" onAction="#handleLogout" styleClass="danger-button"/>
+                    </children>
+                </HBox>
             </children>
-        </HBox>
+        </VBox>
     </top>
 
     <center>
