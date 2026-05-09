@@ -1,4 +1,10 @@
 @echo off
 cd /d "%~dp0"
-call mvnw.cmd javafx:run
+
+echo ==============================
+echo RUN AUCTION HUB
+echo ==============================
+
+call mvn clean javafx:run
+
 pause

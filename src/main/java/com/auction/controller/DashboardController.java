@@ -1,25 +1,24 @@
 package com.auction.controller;
-import javafx.collections.FXCollections;
 
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
-
-import javafx.scene.control.cell.PropertyValueFactory;
-
-import com.auction.repository.JdbcAuctionRepository;
 import com.auction.app.AppContext;
 import com.auction.model.auction.AuctionView;
 import com.auction.model.user.User;
+import com.auction.repository.JdbcAuctionRepository;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class DashboardController {
-    @FXML
-    private void handleCloseApp() {
-        System.exit(0);
-    }
+
     @FXML
     private TableView<AuctionView> auctionTable;
 
@@ -38,13 +37,16 @@ public class DashboardController {
     @FXML
     private TableColumn<AuctionView, String> colAuctionEndTime;
 
-    private final AppContext appContext;
-
     @FXML
     private Label welcomeLabel;
 
     @FXML
+    private TabPane mainTabPane;
+
+    @FXML
     private TabPane managementTabPane;
+
+    private final AppContext appContext;
 
     public DashboardController(AppContext appContext) {
         this.appContext = appContext;
@@ -68,20 +70,74 @@ public class DashboardController {
         }
     }
 
+    private void setupAuctionTable() {
+        colAuctionItem.setCellValueFactory(
+                new PropertyValueFactory<>("title")
+        );
+
+        colAuctionSeller.setCellValueFactory(
+                new PropertyValueFactory<>("sellerName")
+        );
+
+        colAuctionCurrentPrice.setCellValueFactory(
+                new PropertyValueFactory<>("currentPrice")
+        );
+
+        colAuctionCurrentPrice.setCellFactory(column -> new TableCell<AuctionView, Double>() {
+            private final NumberFormat vndFormat =
+                    NumberFormat.getNumberInstance(new Locale("vi", "VN"));
+
+            @Override
+            protected void updateItem(Double price, boolean empty) {
+                super.updateItem(price, empty);
+
+                if (empty || price == null) {
+                    setText(null);
+                } else {
+                    setText(vndFormat.format(price) + " đ");
+                }
+            }
+        });
+
+        colAuctionStatus.setCellValueFactory(
+                new PropertyValueFactory<>("status")
+        );
+
+        colAuctionEndTime.setCellValueFactory(
+                new PropertyValueFactory<>("endTime")
+        );
+    }
+
+    private void loadAuctionTable() {
+        JdbcAuctionRepository repo = new JdbcAuctionRepository();
+
+        auctionTable.setItems(
+                FXCollections.observableArrayList(
+                        repo.findAll()
+                )
+        );
+    }
+
     private void openAllTabsForDemo() {
-        if (managementTabPane == null) {
-            return;
+        if (managementTabPane != null) {
+            for (Tab tab : managementTabPane.getTabs()) {
+                tab.setDisable(false);
+                tab.setStyle("-fx-opacity: 1;");
+            }
         }
 
-        for (Tab tab : managementTabPane.getTabs()) {
-            tab.setDisable(false);
-            tab.setStyle("-fx-opacity: 1;");
+        if (mainTabPane != null) {
+            for (Tab tab : mainTabPane.getTabs()) {
+                tab.setDisable(false);
+                tab.setStyle("-fx-opacity: 1;");
+            }
         }
     }
 
     @FXML
     private void handleRefresh() {
         openAllTabsForDemo();
+        loadAuctionTable();
     }
 
     @FXML
@@ -92,7 +148,7 @@ public class DashboardController {
 
     @FXML
     private void handleFilterAuctions() {
-        openAllTabsForDemo();
+        loadAuctionTable();
     }
 
     @FXML
@@ -134,33 +190,9 @@ public class DashboardController {
     private void handleRemoveAuction() {
         System.out.println("handleRemoveAuction clicked");
     }
-    private void setupAuctionTable() {
 
-        colAuctionItem.setCellValueFactory(
-                new PropertyValueFactory<>("title"));
-
-        colAuctionSeller.setCellValueFactory(
-                new PropertyValueFactory<>("sellerName"));
-
-        colAuctionCurrentPrice.setCellValueFactory(
-                new PropertyValueFactory<>("currentPrice"));
-
-        colAuctionStatus.setCellValueFactory(
-                new PropertyValueFactory<>("status"));
-
-        colAuctionEndTime.setCellValueFactory(
-                new PropertyValueFactory<>("endTime"));
-    }
-
-    private void loadAuctionTable() {
-
-        JdbcAuctionRepository repo =
-                new JdbcAuctionRepository();
-
-        auctionTable.setItems(
-                FXCollections.observableArrayList(
-                        repo.findAll()
-                )
-        );
+    @FXML
+    private void handleCloseApp() {
+        System.exit(0);
     }
 }
