@@ -1,6 +1,14 @@
 package com.auction.controller;
+import javafx.collections.FXCollections;
 
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
+
+import javafx.scene.control.cell.PropertyValueFactory;
+
+import com.auction.repository.JdbcAuctionRepository;
 import com.auction.app.AppContext;
+import com.auction.model.auction.AuctionView;
 import com.auction.model.user.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -8,6 +16,27 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
 public class DashboardController {
+    @FXML
+    private void handleCloseApp() {
+        System.exit(0);
+    }
+    @FXML
+    private TableView<AuctionView> auctionTable;
+
+    @FXML
+    private TableColumn<AuctionView, String> colAuctionItem;
+
+    @FXML
+    private TableColumn<AuctionView, String> colAuctionSeller;
+
+    @FXML
+    private TableColumn<AuctionView, Double> colAuctionCurrentPrice;
+
+    @FXML
+    private TableColumn<AuctionView, String> colAuctionStatus;
+
+    @FXML
+    private TableColumn<AuctionView, String> colAuctionEndTime;
 
     private final AppContext appContext;
 
@@ -23,19 +52,20 @@ public class DashboardController {
 
     @FXML
     public void initialize() {
+        openAllTabsForDemo();
+
+        if (auctionTable != null) {
+            setupAuctionTable();
+            loadAuctionTable();
+        }
+
         User current = appContext.getCurrentUser();
 
         if (welcomeLabel != null && current != null) {
             welcomeLabel.setText(
-                    "Xin chào, "
-                            + current.getFullName()
-                            + " ("
-                            + current.getRole()
-                            + ")"
+                    "Xin chào, " + current.getFullName() + " (" + current.getRole() + ")"
             );
         }
-
-        openAllTabsForDemo();
     }
 
     private void openAllTabsForDemo() {
@@ -103,5 +133,34 @@ public class DashboardController {
     @FXML
     private void handleRemoveAuction() {
         System.out.println("handleRemoveAuction clicked");
+    }
+    private void setupAuctionTable() {
+
+        colAuctionItem.setCellValueFactory(
+                new PropertyValueFactory<>("title"));
+
+        colAuctionSeller.setCellValueFactory(
+                new PropertyValueFactory<>("sellerName"));
+
+        colAuctionCurrentPrice.setCellValueFactory(
+                new PropertyValueFactory<>("currentPrice"));
+
+        colAuctionStatus.setCellValueFactory(
+                new PropertyValueFactory<>("status"));
+
+        colAuctionEndTime.setCellValueFactory(
+                new PropertyValueFactory<>("endTime"));
+    }
+
+    private void loadAuctionTable() {
+
+        JdbcAuctionRepository repo =
+                new JdbcAuctionRepository();
+
+        auctionTable.setItems(
+                FXCollections.observableArrayList(
+                        repo.findAll()
+                )
+        );
     }
 }
