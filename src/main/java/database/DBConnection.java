@@ -6,7 +6,7 @@ import java.sql.DriverManager;
 public class DBConnection {
 
     private static final String URL =
-            "mysql://root:NlwzAxNjSpSuVqcpchvKIgUblDiNkdYE@turntable.proxy.rlwy.net:31353/railway";
+            "jdbc:mysql://turntable.proxy.rlwy.net:31353/railway?useSSL=false&serverTimezone=UTC";
 
     private static final String USER = "root";
 
