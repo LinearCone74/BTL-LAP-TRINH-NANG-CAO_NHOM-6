@@ -1,5 +1,6 @@
 package com.auction.app;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -18,18 +19,18 @@ public class SceneNavigator {
     }
 
     public void showLogin() {
-        show("/com/auction/view/login.fxml");
+        show("/com/auction/view/login.fxml", true);
     }
 
     public void showRegister() {
-        show("/com/auction/view/register.fxml");
+        show("/com/auction/view/register.fxml", true);
     }
 
     public void showDashboard() {
-        show("/com/auction/view/dashboard.fxml");
+        show("/com/auction/view/dashboard.fxml", true);
     }
 
-    private void show(String resource) {
+    private void show(String resource, boolean maximized) {
         try {
             URL url = getClass().getResource(resource);
             if (url == null) {
@@ -38,8 +39,8 @@ public class SceneNavigator {
 
             FXMLLoader loader = new FXMLLoader(url);
             loader.setControllerFactory(type -> ControllerFactory.create(type, appContext));
-            Parent root = loader.load();
 
+            Parent root = loader.load();
             Scene scene = new Scene(root);
 
             URL cssUrl = getClass().getResource("/com/auction/style/app.css");
@@ -48,6 +49,15 @@ public class SceneNavigator {
             }
 
             stage.setScene(scene);
+            stage.show();
+
+            if (maximized) {
+                Platform.runLater(() -> {
+                    stage.setMaximized(false);
+                    stage.setMaximized(true);
+                });
+            }
+
         } catch (IOException e) {
             throw new IllegalStateException("Khong tai duoc giao dien: " + resource, e);
         }

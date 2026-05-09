@@ -10,18 +10,22 @@ public class AuctionApp extends Application {
     public void start(Stage primaryStage) {
         AppContext appContext = AppContext.bootstrap(primaryStage);
         appContext.getNavigator().showLogin();
+
         primaryStage.setTitle("AuctionHub - Hệ thống đấu giá trực tuyến");
         primaryStage.setMinWidth(1200);
         primaryStage.setMinHeight(680);
 
+        primaryStage.setMaximized(true);
+
         primaryStage.getIcons().add(
-                new Image(
-                        getClass().getResourceAsStream("/com/auction/icon.png")
-                )
+                new Image(getClass().getResourceAsStream("/com/auction/icon.png"))
         );
 
         primaryStage.show();
+
     }
+
+
 
     public static void main(String[] args) {
         launch(args);

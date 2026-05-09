@@ -1,82 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="700" prefWidth="1100" styleClass="login-root" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auction.controller.LoginController">
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.auction.controller.LoginController"
+            styleClass="auth-container">
 
     <center>
-        <HBox alignment="CENTER" prefHeight="695.0" prefWidth="1034.0" styleClass="login-shell">
+        <GridPane styleClass="login-shell"
+                  maxWidth="1200"
+                  maxHeight="720">
+
+            <columnConstraints>
+                <ColumnConstraints percentWidth="45"/>
+                <ColumnConstraints percentWidth="55"/>
+            </columnConstraints>
+
             <children>
 
-                  <Pane />
+                <!-- LEFT BRAND AREA -->
+                <VBox GridPane.columnIndex="0"
+                      alignment="CENTER"
+                      spacing="26"
+                      styleClass="login-left">
 
-                <VBox spacing="18" styleClass="login-brand">
                     <children>
-                        <Label styleClass="login-icon" text="🔨" />
+                        <Label text="🔨" styleClass="login-icon"/>
 
-                        <Label maxWidth="Infinity" styleClass="login-title" text="AuctionHub" />
+                        <Label text="AuctionHub" styleClass="login-brand"/>
 
-                        <Label styleClass="login-subtitle" text="Sàn đấu giá trực tuyến" wrapText="true" />
+                        <Label text="Sàn đấu giá trực tuyến"
+                               styleClass="login-brand-subtitle"/>
 
-                        <Label styleClass="login-slogan" text="Nhanh  - Công bằng - Thông minh" />
+                        <Region VBox.vgrow="ALWAYS"/>
+
+                        <Label text="Nhanh  -  Công bằng  -  Thông minh"
+                               styleClass="login-slogan"/>
                     </children>
+
+                    <padding>
+                        <Insets top="70" right="60" bottom="70" left="60"/>
+                    </padding>
                 </VBox>
 
-                <VBox spacing="16" styleClass="login-form">
+                <!-- RIGHT LOGIN AREA -->
+                <VBox GridPane.columnIndex="1"
+                      alignment="CENTER_LEFT"
+                      spacing="16"
+                      styleClass="login-right">
+
                     <children>
+                        <Label text="Đăng nhập" styleClass="login-title"/>
 
-                        <VBox spacing="4" styleClass="login-header">
+                        <Label text="Tham gia phiên đấu giá và đặt bid tức thì"
+                               styleClass="login-subtitle"/>
+
+                        <Separator/>
+
+                        <Label text="Tên đăng nhập" styleClass="field-label"/>
+                        <TextField fx:id="usernameField"
+                                   promptText="Nhập username"
+                                   maxWidth="520"/>
+
+                        <Label text="Mật khẩu" styleClass="field-label"/>
+                        <PasswordField fx:id="passwordField"
+                                       promptText="Nhập mật khẩu"
+                                       maxWidth="520"/>
+
+                        <Label text="Vai trò" styleClass="field-label"/>
+                        <ComboBox fx:id="roleComboBox"
+                                  maxWidth="520"/>
+
+                        <Region prefHeight="28"/>
+
+                        <HBox spacing="16"
+                              alignment="CENTER"
+                              fillHeight="false">
                             <children>
-                                <Label styleClass="form-title" text="Đăng nhập" />
+                                <Button text="Vào sàn đấu giá"
+                                        prefWidth="220"
+                                        prefHeight="52"
+                                        onAction="#handleLogin"
+                                        styleClass="primary-button"/>
 
-                                <Label styleClass="form-subtitle" text="Tham gia phiên đấu giá và đặt bid tức thì" />
-                            </children>
-                        </VBox>
-
-                        <VBox spacing="7">
-                            <children>
-                                <Label styleClass="field-label" text="Tên đăng nhập" />
-                                <TextField fx:id="usernameField" promptText="Nhập username" />
-                            </children>
-                        </VBox>
-
-                        <VBox spacing="7">
-                            <children>
-                                <Label styleClass="field-label" text="Mật khẩu" />
-                                <PasswordField fx:id="passwordField" promptText="Nhập mật khẩu" />
-                            </children>
-                        </VBox>
-
-                        <VBox spacing="7">
-                            <children>
-                                <Label styleClass="field-label" text="Vai trò" />
-                                <ComboBox fx:id="roleComboBox" maxWidth="Infinity" />
-                            </children>
-                        </VBox>
-
-                        <Label fx:id="messageLabel" styleClass="error-label" wrapText="true" />
-
-                        <HBox spacing="12">
-                            <children>
-                                <Button maxWidth="Infinity" onAction="#handleLogin" styleClass="primary-button" text="Vào sàn đấu giá" HBox.hgrow="ALWAYS" />
-
-                                <Button maxWidth="Infinity" onAction="#handleClear" styleClass="secondary-button" text="Xóa" HBox.hgrow="ALWAYS" />
-                            </children>
-                        </HBox>
-
-                        <HBox alignment="CENTER" spacing="6">
-                            <children>
-                                <Label styleClass="muted-text" text="Chưa có tài khoản?" />
-                                <Hyperlink onAction="#goToRegister" text="Đăng ký để bắt đầu bid" />
+                                <Button text="Xóa"
+                                        prefWidth="220"
+                                        prefHeight="52"
+                                        onAction="#handleClear"
+                                        styleClass="secondary-button"/>
                             </children>
                         </HBox>
 
+                        <HBox spacing="6" alignment="CENTER">
+                            <children>
+                                <Label text="Chưa có tài khoản?"
+                                       styleClass="muted-label"/>
+
+                                <Hyperlink text="Đăng ký để bắt đầu bid"
+                                           onAction="#goToRegister"
+                                           styleClass="auth-link"/>
+                            </children>
+                        </HBox>
+
+                        <Label fx:id="messageLabel"
+                               wrapText="true"
+                               styleClass="success-label"/>
                     </children>
+
+                    <padding>
+                        <Insets top="70" right="70" bottom="70" left="70"/>
+                    </padding>
                 </VBox>
 
             </children>
-        </HBox>
+        </GridPane>
     </center>
 
 </BorderPane>
