@@ -11,111 +11,83 @@
             styleClass="login-root">
 
     <center>
-        <HBox alignment="CENTER"
-              styleClass="login-shell">
-
+        <HBox alignment="CENTER" styleClass="login-shell">
             <children>
 
-                <!-- PANEL XANH GIỮ Y HỆT LOGIN -->
-                <VBox spacing="18"
-                      styleClass="login-brand">
-
+                <VBox spacing="18" styleClass="login-brand">
                     <children>
-                        <Label text="🎓"
-                               styleClass="login-icon"/>
+                        <Label text="🔨" styleClass="login-icon"/>
 
                         <Label text="AuctionHub"
                                styleClass="login-title"
                                maxWidth="Infinity"/>
 
-                        <Label text="Hệ thống đấu giá thông minh"
+                        <Label text="Marketplace đấu giá thời gian thực"
+                               wrapText="true"
                                styleClass="login-subtitle"/>
 
                         <Pane VBox.vgrow="ALWAYS"/>
 
-                        <Label text="Bid smart • Trade fast • Win better"
+                        <Label text="List items • Place bids • Close deals"
                                styleClass="login-slogan"/>
                     </children>
-
                 </VBox>
 
-                <!-- FORM ĐĂNG KÝ -->
-                <VBox spacing="10"
-                      styleClass="login-form">
-
+                <VBox spacing="10" styleClass="login-form">
                     <children>
 
-                        <VBox spacing="4"
-                              styleClass="login-header">
-
+                        <VBox spacing="4" styleClass="login-header">
                             <children>
                                 <Label text="Tạo tài khoản"
                                        styleClass="form-title"/>
 
-                                <Label text="Đăng ký Bidder hoặc Seller"
+                                <Label text="Đăng ký để mua, bán và tham gia đấu giá"
                                        styleClass="form-subtitle"/>
                             </children>
-
                         </VBox>
 
                         <VBox spacing="5">
                             <children>
-                                <Label text="Tên đăng nhập"
-                                       styleClass="field-label"/>
-
-                                <TextField fx:id="usernameField"
-                                           promptText="Nhập username"/>
+                                <Label text="Tên đăng nhập" styleClass="field-label"/>
+                                <TextField fx:id="usernameField" promptText="Nhập username"/>
                             </children>
                         </VBox>
 
                         <VBox spacing="5">
                             <children>
-                                <Label text="Mật khẩu"
-                                       styleClass="field-label"/>
-
-                                <PasswordField fx:id="passwordField"
-                                               promptText="Nhập mật khẩu"/>
+                                <Label text="Mật khẩu" styleClass="field-label"/>
+                                <PasswordField fx:id="passwordField" promptText="Nhập mật khẩu"/>
                             </children>
                         </VBox>
 
                         <VBox spacing="5">
                             <children>
-                                <Label text="Họ và tên"
-                                       styleClass="field-label"/>
-
-                                <TextField fx:id="fullNameField"
-                                           promptText="Nhập họ tên"/>
+                                <Label text="Họ và tên" styleClass="field-label"/>
+                                <TextField fx:id="fullNameField" promptText="Nhập họ tên"/>
                             </children>
                         </VBox>
 
                         <VBox spacing="5">
                             <children>
-                                <Label text="Email"
-                                       styleClass="field-label"/>
-
-                                <TextField fx:id="emailField"
-                                           promptText="Nhập email"/>
+                                <Label text="Email" styleClass="field-label"/>
+                                <TextField fx:id="emailField" promptText="Nhập email"/>
                             </children>
                         </VBox>
 
                         <VBox spacing="5">
                             <children>
-                                <Label text="Vai trò"
-                                       styleClass="field-label"/>
-
+                                <Label text="Vai trò" styleClass="field-label"/>
                                 <ComboBox fx:id="roleComboBox"
                                           promptText="Chọn vai trò"
                                           maxWidth="Infinity"/>
                             </children>
                         </VBox>
 
-                        <Label fx:id="messageLabel"
-                               styleClass="success-label"
-                               wrapText="true"/>
+                        <Label fx:id="messageLabel" styleClass="success-label" wrapText="true"/>
 
                         <HBox spacing="12">
                             <children>
-                                <Button text="Đăng ký"
+                                <Button text="Tạo tài khoản"
                                         onAction="#handleRegister"
                                         styleClass="primary-button"
                                         HBox.hgrow="ALWAYS"
@@ -130,11 +102,9 @@
                         </HBox>
 
                     </children>
-
                 </VBox>
 
             </children>
-
         </HBox>
     </center>
 
