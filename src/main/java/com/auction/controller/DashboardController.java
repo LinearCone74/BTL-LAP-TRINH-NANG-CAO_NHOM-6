@@ -1,25 +1,27 @@
 package com.auction.controller;
-import javafx.collections.FXCollections;
 
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
-
-import javafx.scene.control.cell.PropertyValueFactory;
-
-import com.auction.repository.JdbcAuctionRepository;
 import com.auction.app.AppContext;
 import com.auction.model.auction.AuctionView;
 import com.auction.model.user.User;
+import com.auction.repository.JdbcAuctionRepository;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.math.BigDecimal;
 
 public class DashboardController {
+
     @FXML
-    private void handleCloseApp() {
-        System.exit(0);
-    }
+    private TextField manualBidField;
+
     @FXML
     private TableView<AuctionView> auctionTable;
 
@@ -30,7 +32,7 @@ public class DashboardController {
     private TableColumn<AuctionView, String> colAuctionSeller;
 
     @FXML
-    private TableColumn<AuctionView, Double> colAuctionCurrentPrice;
+    private TableColumn<AuctionView, BigDecimal> colAuctionCurrentPrice;
 
     @FXML
     private TableColumn<AuctionView, String> colAuctionStatus;
@@ -38,13 +40,13 @@ public class DashboardController {
     @FXML
     private TableColumn<AuctionView, String> colAuctionEndTime;
 
-    private final AppContext appContext;
-
     @FXML
     private Label welcomeLabel;
 
     @FXML
     private TabPane managementTabPane;
+
+    private final AppContext appContext;
 
     public DashboardController(AppContext appContext) {
         this.appContext = appContext;
@@ -57,6 +59,14 @@ public class DashboardController {
         if (auctionTable != null) {
             setupAuctionTable();
             loadAuctionTable();
+
+            auctionTable.getSelectionModel().selectedItemProperty().addListener(
+                    (obs, oldSelection, newSelection) -> {
+                        if (newSelection != null) {
+                            showAuctionDetail(newSelection);
+                        }
+                    }
+            );
         }
 
         User current = appContext.getCurrentUser();
@@ -82,6 +92,7 @@ public class DashboardController {
     @FXML
     private void handleRefresh() {
         openAllTabsForDemo();
+        loadAuctionTable();
     }
 
     @FXML
@@ -93,11 +104,49 @@ public class DashboardController {
     @FXML
     private void handleFilterAuctions() {
         openAllTabsForDemo();
+        loadAuctionTable();
     }
 
     @FXML
     private void handlePlaceBid() {
-        System.out.println("handlePlaceBid clicked");
+        AuctionView selectedAuction =
+                auctionTable.getSelectionModel().getSelectedItem();
+
+        if (selectedAuction == null) {
+            showAlert("Vui lòng chọn một phiên đấu giá!");
+            return;
+        }
+
+        String bidText = manualBidField.getText();
+
+        if (bidText == null || bidText.isBlank()) {
+            showAlert("Vui lòng nhập số tiền bid!");
+            return;
+        }
+
+        try {
+            BigDecimal bidAmount = new BigDecimal(bidText.trim());
+
+            if (selectedAuction.getCurrentPrice() != null
+                    && bidAmount.compareTo(selectedAuction.getCurrentPrice()) <= 0) {
+                showAlert("Giá bid phải cao hơn giá hiện tại!");
+                return;
+            }
+
+            selectedAuction.setCurrentPrice(bidAmount);
+            auctionTable.refresh();
+            manualBidField.clear();
+
+            showAlert("Đặt bid thành công!");
+
+        } catch (NumberFormatException e) {
+            showAlert("Số tiền bid không hợp lệ!");
+        }
+    }
+
+    private void showAuctionDetail(AuctionView auction) {
+        System.out.println("Đã chọn phiên: " + auction.getTitle());
+        showAlert("Đã chọn phiên đấu giá: " + auction.getTitle());
     }
 
     @FXML
@@ -134,33 +183,48 @@ public class DashboardController {
     private void handleRemoveAuction() {
         System.out.println("handleRemoveAuction clicked");
     }
-    private void setupAuctionTable() {
 
+    @FXML
+    private void handleCloseApp() {
+        System.exit(0);
+    }
+
+    private void setupAuctionTable() {
         colAuctionItem.setCellValueFactory(
-                new PropertyValueFactory<>("title"));
+                new PropertyValueFactory<>("title")
+        );
 
         colAuctionSeller.setCellValueFactory(
-                new PropertyValueFactory<>("sellerName"));
+                new PropertyValueFactory<>("sellerName")
+        );
 
         colAuctionCurrentPrice.setCellValueFactory(
-                new PropertyValueFactory<>("currentPrice"));
+                new PropertyValueFactory<>("currentPrice")
+        );
 
         colAuctionStatus.setCellValueFactory(
-                new PropertyValueFactory<>("status"));
+                new PropertyValueFactory<>("status")
+        );
 
         colAuctionEndTime.setCellValueFactory(
-                new PropertyValueFactory<>("endTime"));
+                new PropertyValueFactory<>("endTime")
+        );
     }
 
     private void loadAuctionTable() {
-
-        JdbcAuctionRepository repo =
-                new JdbcAuctionRepository();
+        JdbcAuctionRepository repo = new JdbcAuctionRepository();
 
         auctionTable.setItems(
                 FXCollections.observableArrayList(
                         repo.findAll()
                 )
         );
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

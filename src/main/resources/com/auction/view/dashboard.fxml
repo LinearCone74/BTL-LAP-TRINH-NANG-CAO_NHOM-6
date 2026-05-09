@@ -210,7 +210,7 @@
                                                            promptText="Nhập số tiền muốn bid"
                                                            HBox.hgrow="ALWAYS"/>
 
-                                                <Button text="Đặt bid"
+                                                <Button text="Đặt bid" 
                                                         prefWidth="120"
                                                         onAction="#handlePlaceBid"
                                                         styleClass="primary-button"/>
