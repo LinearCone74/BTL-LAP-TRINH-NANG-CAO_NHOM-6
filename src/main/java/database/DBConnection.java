@@ -6,11 +6,11 @@ import java.sql.DriverManager;
 public class DBConnection {
 
     private static final String URL =
-            "jdbc:mysql://localhost:3306/auction_app";
+            "mysql://root:NlwzAxNjSpSuVqcpchvKIgUblDiNkdYE@turntable.proxy.rlwy.net:31353/railway";
 
     private static final String USER = "root";
 
-    private static final String PASSWORD = "123456";
+    private static final String PASSWORD = "NlwzAxNjSpSuVqcpchvKIgUblDiNkdYE";
 
     public static Connection getConnection() {
         try {
