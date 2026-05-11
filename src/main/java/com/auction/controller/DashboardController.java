@@ -2,20 +2,22 @@ package com.auction.controller;
 
 import com.auction.app.AppContext;
 import com.auction.model.auction.AuctionView;
+import com.auction.model.auction.BidTransaction;
 import com.auction.model.user.User;
 import com.auction.repository.JdbcAuctionRepository;
+import java.math.BigDecimal;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-
-import java.math.BigDecimal;
 
 public class DashboardController {
 
@@ -46,7 +48,18 @@ public class DashboardController {
     @FXML
     private TabPane managementTabPane;
 
+    @FXML
+    private LineChart<Number, Number> priceChart;
+
+    @FXML
+    private NumberAxis xAxis;
+
+    @FXML
+    private NumberAxis yAxis;
+
     private final AppContext appContext;
+
+    private XYChart.Series<Number, Number> priceSeries;
 
     public DashboardController(AppContext appContext) {
         this.appContext = appContext;
@@ -56,26 +69,105 @@ public class DashboardController {
     public void initialize() {
         openAllTabsForDemo();
 
+        setupPriceChart();
+
         if (auctionTable != null) {
             setupAuctionTable();
             loadAuctionTable();
 
-            auctionTable.getSelectionModel().selectedItemProperty().addListener(
-                    (obs, oldSelection, newSelection) -> {
-                        if (newSelection != null) {
-                            showAuctionDetail(newSelection);
+            auctionTable.getSelectionModel()
+                    .selectedItemProperty()
+                    .addListener((observable, oldValue, newValue) -> {
+                        if (newValue != null) {
+                            showAuctionDetail(newValue);
+                            rebuildPriceChart(newValue);
                         }
-                    }
-            );
+                    });
         }
 
-        User current = appContext.getCurrentUser();
-
-        if (welcomeLabel != null && current != null) {
+        User currentUser = appContext.getCurrentUser();
+        if (welcomeLabel != null && currentUser != null) {
             welcomeLabel.setText(
-                    "Xin chào, " + current.getFullName() + " (" + current.getRole() + ")"
+                    "Xin chào, " + currentUser.getFullName()
+                            + " (" + currentUser.getRole() + ")"
             );
         }
+    }
+
+    private void setupPriceChart() {
+        if (priceChart == null) {
+            return;
+        }
+
+        priceSeries = new XYChart.Series<>();
+        priceSeries.setName("Giá đấu hiện tại");
+
+        priceChart.getData().clear();
+        priceChart.getData().add(priceSeries);
+
+        priceChart.setAnimated(false);
+        priceChart.setCreateSymbols(true);
+        priceChart.setLegendVisible(false);
+        priceChart.setTitle("Bid History Visualization - Realtime Price Curve");
+
+        if (xAxis != null) {
+            xAxis.setLabel("Thời gian / lượt bid");
+            xAxis.setForceZeroInRange(false);
+        }
+
+        if (yAxis != null) {
+            yAxis.setLabel("Giá đấu hiện tại");
+            yAxis.setForceZeroInRange(false);
+        }
+    }
+
+    private void rebuildPriceChart(AuctionView auctionView) {
+        if (priceSeries == null || auctionView == null) {
+            return;
+        }
+
+        priceSeries.getData().clear();
+
+        int index = 1;
+
+        if (auctionView.getBidHistory() != null) {
+            for (BidTransaction bid : auctionView.getBidHistory()) {
+                if (bid != null && bid.getAmount() != null) {
+                    priceSeries.getData().add(
+                            new XYChart.Data<>(
+                                    index,
+                                    bid.getAmount()
+                            )
+                    );
+                    index++;
+                }
+            }
+        }
+
+        if (priceSeries.getData().isEmpty()
+                && auctionView.getCurrentPrice() != null) {
+            priceSeries.getData().add(
+                    new XYChart.Data<>(
+                            1,
+                            auctionView.getCurrentPrice()
+                    )
+            );
+        }
+    }
+
+    private void addRealtimeBidToChart(BigDecimal price) {
+        if (priceSeries == null || price == null) {
+            return;
+        }
+
+        int nextIndex = priceSeries.getData().size() + 1;
+
+        priceSeries.getData().add(
+                new XYChart.Data<>(
+                        nextIndex,
+                        price
+                )
+        );
     }
 
     private void openAllTabsForDemo() {
@@ -83,16 +175,21 @@ public class DashboardController {
             return;
         }
 
-        for (Tab tab : managementTabPane.getTabs()) {
+        managementTabPane.getTabs().forEach(tab -> {
             tab.setDisable(false);
             tab.setStyle("-fx-opacity: 1;");
-        }
+        });
     }
 
     @FXML
     private void handleRefresh() {
         openAllTabsForDemo();
         loadAuctionTable();
+
+        AuctionView selectedAuction = getSelectedAuction();
+        if (selectedAuction != null) {
+            rebuildPriceChart(selectedAuction);
+        }
     }
 
     @FXML
@@ -109,23 +206,22 @@ public class DashboardController {
 
     @FXML
     private void handlePlaceBid() {
-        AuctionView selectedAuction =
-                auctionTable.getSelectionModel().getSelectedItem();
+        AuctionView selectedAuction = getSelectedAuction();
 
         if (selectedAuction == null) {
             showAlert("Vui lòng chọn một phiên đấu giá!");
             return;
         }
 
-        String bidText = manualBidField.getText();
+        String amountText = manualBidField.getText();
 
-        if (bidText == null || bidText.isBlank()) {
+        if (amountText == null || amountText.isBlank()) {
             showAlert("Vui lòng nhập số tiền bid!");
             return;
         }
 
         try {
-            BigDecimal bidAmount = new BigDecimal(bidText.trim());
+            BigDecimal bidAmount = new BigDecimal(amountText.trim());
 
             if (selectedAuction.getCurrentPrice() != null
                     && bidAmount.compareTo(selectedAuction.getCurrentPrice()) <= 0) {
@@ -134,19 +230,29 @@ public class DashboardController {
             }
 
             selectedAuction.setCurrentPrice(bidAmount);
+
             auctionTable.refresh();
             manualBidField.clear();
 
+            addRealtimeBidToChart(bidAmount);
+
             showAlert("Đặt bid thành công!");
 
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException exception) {
             showAlert("Số tiền bid không hợp lệ!");
         }
     }
 
-    private void showAuctionDetail(AuctionView auction) {
-        System.out.println("Đã chọn phiên: " + auction.getTitle());
-        showAlert("Đã chọn phiên đấu giá: " + auction.getTitle());
+    private AuctionView getSelectedAuction() {
+        if (auctionTable == null) {
+            return null;
+        }
+
+        return auctionTable.getSelectionModel().getSelectedItem();
+    }
+
+    private void showAuctionDetail(AuctionView auctionView) {
+        System.out.println("Selected auction: " + auctionView.getTitle());
     }
 
     @FXML
@@ -212,12 +318,10 @@ public class DashboardController {
     }
 
     private void loadAuctionTable() {
-        JdbcAuctionRepository repo = new JdbcAuctionRepository();
+        JdbcAuctionRepository repository = new JdbcAuctionRepository();
 
         auctionTable.setItems(
-                FXCollections.observableArrayList(
-                        repo.findAll()
-                )
+                FXCollections.observableArrayList(repository.findAll())
         );
     }
 
