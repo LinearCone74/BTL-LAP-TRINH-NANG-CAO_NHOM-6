@@ -17,11 +17,13 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
@@ -37,6 +39,9 @@ public class DashboardController {
             NumberFormat.getInstance(new Locale("vi", "VN"));
 
     @FXML private TextField manualBidField;
+
+    @FXML private TextField searchField;
+    @FXML private ChoiceBox<String> statusFilterChoiceBox;
 
     @FXML private TableView<AuctionView> auctionTable;
     @FXML private TableColumn<AuctionView, String> colAuctionItem;
@@ -72,6 +77,8 @@ public class DashboardController {
     private final AppContext appContext;
     private final AuctionClosingService auctionClosingService = new AuctionClosingService();
 
+    private ObservableList<AuctionView> allAuctions = FXCollections.observableArrayList();
+
     private XYChart.Series<Number, Number> priceSeries;
     private RealtimeBidClient realtimeBidClient;
 
@@ -85,6 +92,7 @@ public class DashboardController {
         setupAuctionTable();
         setupBidHistoryTable();
         setupPriceChart();
+        setupFilterControls();
         setupRealtimeSocket();
         loadAuctionTable();
         startAuctionMonitor();
@@ -110,6 +118,34 @@ public class DashboardController {
         }
     }
 
+    private void setupFilterControls() {
+        if (statusFilterChoiceBox != null) {
+            statusFilterChoiceBox.setItems(
+                    FXCollections.observableArrayList(
+                            "Tất cả",
+                            "OPEN",
+                            "RUNNING",
+                            "FINISHED",
+                            "PAID",
+                            "CANCELED"
+                    )
+            );
+            statusFilterChoiceBox.setValue("Tất cả");
+        }
+
+        if (searchField != null) {
+            searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+                applyAuctionFilter();
+            });
+        }
+
+        if (statusFilterChoiceBox != null) {
+            statusFilterChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+                applyAuctionFilter();
+            });
+        }
+    }
+
     private String formatMoney(BigDecimal amount) {
         if (amount == null) {
             return "";
@@ -131,7 +167,7 @@ public class DashboardController {
 
                         boolean changed = false;
 
-                        for (AuctionView auctionView : auctionTable.getItems()) {
+                        for (AuctionView auctionView : allAuctions) {
                             boolean closed = auctionClosingService.checkAndClose(auctionView);
 
                             if (closed) {
@@ -144,7 +180,7 @@ public class DashboardController {
                         }
 
                         if (changed) {
-                            auctionTable.refresh();
+                            applyAuctionFilter();
 
                             AuctionView selectedAuction = getSelectedAuction();
                             if (selectedAuction != null) {
@@ -214,11 +250,11 @@ public class DashboardController {
     }
 
     private AuctionView findAuctionByMessage(RealtimeBidMessage message) {
-        if (auctionTable == null || auctionTable.getItems() == null) {
+        if (allAuctions == null) {
             return null;
         }
 
-        for (AuctionView auctionView : auctionTable.getItems()) {
+        for (AuctionView auctionView : allAuctions) {
             if (auctionView == null) {
                 continue;
             }
@@ -363,7 +399,55 @@ public class DashboardController {
 
     @FXML
     private void handleFilterAuctions() {
-        loadAuctionTable();
+        applyAuctionFilter();
+    }
+
+    private void applyAuctionFilter() {
+        if (auctionTable == null) {
+            return;
+        }
+
+        String keyword = "";
+
+        if (searchField != null && searchField.getText() != null) {
+            keyword = searchField.getText().trim().toLowerCase();
+        }
+
+        String selectedStatus = "Tất cả";
+
+        if (statusFilterChoiceBox != null && statusFilterChoiceBox.getValue() != null) {
+            selectedStatus = statusFilterChoiceBox.getValue();
+        }
+
+        ObservableList<AuctionView> filteredAuctions =
+                FXCollections.observableArrayList();
+
+        for (AuctionView auctionView : allAuctions) {
+            if (auctionView == null) {
+                continue;
+            }
+
+            String title = auctionView.getTitle() == null
+                    ? ""
+                    : auctionView.getTitle().toLowerCase();
+
+            String status = auctionView.getStatus() == null
+                    ? ""
+                    : String.valueOf(auctionView.getStatus());
+
+            boolean matchesKeyword = keyword.isBlank()
+                    || title.contains(keyword);
+
+            boolean matchesStatus = "Tất cả".equals(selectedStatus)
+                    || status.equalsIgnoreCase(selectedStatus);
+
+            if (matchesKeyword && matchesStatus) {
+                filteredAuctions.add(auctionView);
+            }
+        }
+
+        auctionTable.setItems(filteredAuctions);
+        auctionTable.refresh();
     }
 
     @FXML
@@ -594,9 +678,9 @@ public class DashboardController {
 
         JdbcAuctionRepository repository = new JdbcAuctionRepository();
 
-        auctionTable.setItems(
-                FXCollections.observableArrayList(repository.findAll())
-        );
+        allAuctions = FXCollections.observableArrayList(repository.findAll());
+
+        applyAuctionFilter();
     }
 
     private void showAlert(String message) {
