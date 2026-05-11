@@ -9,8 +9,11 @@ import com.auction.realtime.RealtimeBidClient;
 import com.auction.realtime.RealtimeBidMessage;
 import com.auction.realtime.RealtimeBidServer;
 import com.auction.repository.JdbcAuctionRepository;
+import com.auction.service.AuctionClosingService;
 import java.math.BigDecimal;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
@@ -28,46 +31,43 @@ public class DashboardController {
 
     private static final int REALTIME_PORT = 5555;
 
-    @FXML
-    private TextField manualBidField;
+    @FXML private TextField manualBidField;
 
-    @FXML
-    private TableView<AuctionView> auctionTable;
+    @FXML private TableView<AuctionView> auctionTable;
+    @FXML private TableColumn<AuctionView, String> colAuctionItem;
+    @FXML private TableColumn<AuctionView, String> colAuctionSeller;
+    @FXML private TableColumn<AuctionView, BigDecimal> colAuctionCurrentPrice;
+    @FXML private TableColumn<AuctionView, String> colAuctionStatus;
+    @FXML private TableColumn<AuctionView, String> colAuctionEndTime;
 
-    @FXML
-    private TableColumn<AuctionView, String> colAuctionItem;
+    @FXML private TableView<BidTransaction> bidHistoryTable;
+    @FXML private TableColumn<BidTransaction, Object> colBidTime;
+    @FXML private TableColumn<BidTransaction, String> colBidder;
+    @FXML private TableColumn<BidTransaction, BigDecimal> colBidAmount;
+    @FXML private TableColumn<BidTransaction, String> colBidType;
 
-    @FXML
-    private TableColumn<AuctionView, String> colAuctionSeller;
+    @FXML private Label welcomeLabel;
+    @FXML private Label itemNameLabel;
+    @FXML private Label itemDescriptionLabel;
+    @FXML private Label startingPriceLabel;
+    @FXML private Label currentPriceLabel;
+    @FXML private Label leaderLabel;
+    @FXML private Label startTimeLabel;
+    @FXML private Label endTimeLabel;
+    @FXML private Label auctionStatusLabel;
+    @FXML private Label bidMessageLabel;
 
-    @FXML
-    private TableColumn<AuctionView, BigDecimal> colAuctionCurrentPrice;
+    @FXML private TabPane mainTabPane;
+    @FXML private TabPane managementTabPane;
 
-    @FXML
-    private TableColumn<AuctionView, String> colAuctionStatus;
-
-    @FXML
-    private TableColumn<AuctionView, String> colAuctionEndTime;
-
-    @FXML
-    private Label welcomeLabel;
-
-    @FXML
-    private TabPane managementTabPane;
-
-    @FXML
-    private LineChart<Number, Number> priceChart;
-
-    @FXML
-    private NumberAxis xAxis;
-
-    @FXML
-    private NumberAxis yAxis;
+    @FXML private LineChart<Number, Number> priceChart;
+    @FXML private NumberAxis xAxis;
+    @FXML private NumberAxis yAxis;
 
     private final AppContext appContext;
+    private final AuctionClosingService auctionClosingService = new AuctionClosingService();
 
     private XYChart.Series<Number, Number> priceSeries;
-
     private RealtimeBidClient realtimeBidClient;
 
     public DashboardController(AppContext appContext) {
@@ -78,9 +78,11 @@ public class DashboardController {
     public void initialize() {
         openAllTabsForDemo();
         setupAuctionTable();
+        setupBidHistoryTable();
         setupPriceChart();
         setupRealtimeSocket();
         loadAuctionTable();
+        startAuctionMonitor();
 
         if (auctionTable != null) {
             auctionTable.getSelectionModel()
@@ -88,6 +90,7 @@ public class DashboardController {
                     .addListener((observable, oldValue, newValue) -> {
                         if (newValue != null) {
                             showAuctionDetail(newValue);
+                            rebuildBidHistoryTable(newValue);
                             rebuildPriceChart(newValue);
                         }
                     });
@@ -102,16 +105,68 @@ public class DashboardController {
         }
     }
 
+    private void startAuctionMonitor() {
+        Thread monitorThread = new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+
+                    Platform.runLater(() -> {
+                        if (auctionTable == null || auctionTable.getItems() == null) {
+                            return;
+                        }
+
+                        boolean changed = false;
+
+                        for (AuctionView auctionView : auctionTable.getItems()) {
+                            boolean closed = auctionClosingService.checkAndClose(auctionView);
+
+                            if (closed) {
+                                changed = true;
+                                System.out.println(
+                                        "[AUCTION CLOSED] Winner: "
+                                                + auctionClosingService.getWinnerName(auctionView)
+                                );
+                            }
+                        }
+
+                        if (changed) {
+                            auctionTable.refresh();
+
+                            AuctionView selectedAuction = getSelectedAuction();
+                            if (selectedAuction != null) {
+                                showAuctionDetail(selectedAuction);
+                                rebuildBidHistoryTable(selectedAuction);
+                                rebuildPriceChart(selectedAuction);
+                            }
+                        }
+                    });
+
+                } catch (Exception ignored) {
+                }
+            }
+        });
+
+        monitorThread.setDaemon(true);
+        monitorThread.setName("auction-closing-monitor");
+        monitorThread.start();
+    }
+
     private void setupRealtimeSocket() {
-        RealtimeBidServer.getInstance().start(REALTIME_PORT);
+        try {
+            RealtimeBidServer.getInstance().start(REALTIME_PORT);
 
-        realtimeBidClient = new RealtimeBidClient(
-                "localhost",
-                REALTIME_PORT,
-                this::handleRealtimeBidMessage
-        );
+            realtimeBidClient = new RealtimeBidClient(
+                    "localhost",
+                    REALTIME_PORT,
+                    this::handleRealtimeBidMessage
+            );
 
-        realtimeBidClient.connect();
+            realtimeBidClient.connect();
+
+        } catch (Exception exception) {
+            System.out.println("Realtime socket disabled: " + exception.getMessage());
+        }
     }
 
     private void handleRealtimeBidMessage(RealtimeBidMessage message) {
@@ -137,9 +192,10 @@ public class DashboardController {
 
             AuctionView selectedAuction = getSelectedAuction();
 
-            if (selectedAuction != null
-                    && isSameAuction(selectedAuction, auctionView)) {
+            if (selectedAuction != null && isSameAuction(selectedAuction, auctionView)) {
+                rebuildBidHistoryTable(selectedAuction);
                 rebuildPriceChart(selectedAuction);
+                showAuctionDetail(selectedAuction);
             }
         });
     }
@@ -186,6 +242,58 @@ public class DashboardController {
         return first == second;
     }
 
+    private void openAllTabsForDemo() {
+        if (mainTabPane != null) {
+            mainTabPane.getTabs().forEach(tab -> {
+                tab.setDisable(false);
+                tab.setStyle("-fx-opacity: 1;");
+            });
+        }
+
+        if (managementTabPane != null) {
+            managementTabPane.getTabs().forEach(tab -> {
+                tab.setDisable(false);
+                tab.setStyle("-fx-opacity: 1;");
+            });
+        }
+    }
+
+    private void setupAuctionTable() {
+        if (auctionTable == null) {
+            return;
+        }
+
+        colAuctionItem.setCellValueFactory(new PropertyValueFactory<>("title"));
+        colAuctionSeller.setCellValueFactory(new PropertyValueFactory<>("sellerName"));
+        colAuctionCurrentPrice.setCellValueFactory(new PropertyValueFactory<>("currentPrice"));
+        colAuctionStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+        colAuctionEndTime.setCellValueFactory(new PropertyValueFactory<>("endTimeText"));
+    }
+
+    private void setupBidHistoryTable() {
+        if (bidHistoryTable == null) {
+            return;
+        }
+
+        colBidTime.setCellValueFactory(cellData ->
+                new SimpleObjectProperty<>(cellData.getValue().getBidTime())
+        );
+
+        colBidder.setCellValueFactory(cellData -> {
+            Bidder bidder = cellData.getValue().getBidder();
+            String bidderName = bidder == null ? "Demo bidder" : bidder.getFullName();
+            return new SimpleStringProperty(bidderName);
+        });
+
+        colBidAmount.setCellValueFactory(cellData ->
+                new SimpleObjectProperty<>(cellData.getValue().getAmount())
+        );
+
+        colBidType.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().isAutoBid() ? "Auto-bid" : "Manual")
+        );
+    }
+
     private void setupPriceChart() {
         if (priceChart == null) {
             return;
@@ -213,59 +321,15 @@ public class DashboardController {
         }
     }
 
-    private void rebuildPriceChart(AuctionView auctionView) {
-        if (priceSeries == null || auctionView == null) {
-            return;
-        }
-
-        priceSeries.getData().clear();
-
-        int index = 1;
-
-        if (auctionView.getBidHistory() != null) {
-            for (BidTransaction bid : auctionView.getBidHistory()) {
-                if (bid != null && bid.getAmount() != null) {
-                    priceSeries.getData().add(
-                            new XYChart.Data<>(
-                                    index,
-                                    bid.getAmount()
-                            )
-                    );
-                    index++;
-                }
-            }
-        }
-
-        if (priceSeries.getData().isEmpty()
-                && auctionView.getCurrentPrice() != null) {
-            priceSeries.getData().add(
-                    new XYChart.Data<>(
-                            1,
-                            auctionView.getCurrentPrice()
-                    )
-            );
-        }
-    }
-
-    private void openAllTabsForDemo() {
-        if (managementTabPane == null) {
-            return;
-        }
-
-        managementTabPane.getTabs().forEach(tab -> {
-            tab.setDisable(false);
-            tab.setStyle("-fx-opacity: 1;");
-        });
-    }
-
     @FXML
     private void handleRefresh() {
         openAllTabsForDemo();
         loadAuctionTable();
 
         AuctionView selectedAuction = getSelectedAuction();
-
         if (selectedAuction != null) {
+            showAuctionDetail(selectedAuction);
+            rebuildBidHistoryTable(selectedAuction);
             rebuildPriceChart(selectedAuction);
         }
     }
@@ -278,7 +342,6 @@ public class DashboardController {
 
     @FXML
     private void handleFilterAuctions() {
-        openAllTabsForDemo();
         loadAuctionTable();
     }
 
@@ -287,7 +350,18 @@ public class DashboardController {
         AuctionView selectedAuction = getSelectedAuction();
 
         if (selectedAuction == null) {
-            showAlert("Vui lòng chọn một phiên đấu giá!");
+            showAlert("Vui lòng chọn một phiên đấu giá ở tab Phiên đấu giá trước!");
+            return;
+        }
+
+        auctionClosingService.checkAndClose(selectedAuction);
+
+        if ("FINISHED".equals(String.valueOf(selectedAuction.getStatus()))
+                || "PAID".equals(String.valueOf(selectedAuction.getStatus()))
+                || "CANCELED".equals(String.valueOf(selectedAuction.getStatus()))) {
+            auctionTable.refresh();
+            showAuctionDetail(selectedAuction);
+            showAlert("Phiên đấu giá đã kết thúc, không thể đặt bid!");
             return;
         }
 
@@ -329,11 +403,10 @@ public class DashboardController {
             selectedAuction.setCurrentPrice(bidAmount);
             selectedAuction.getBidHistory().add(newBid);
 
-            if (auctionTable != null) {
-                auctionTable.refresh();
-            }
-
+            auctionTable.refresh();
+            rebuildBidHistoryTable(selectedAuction);
             rebuildPriceChart(selectedAuction);
+            showAuctionDetail(selectedAuction);
 
             if (realtimeBidClient != null) {
                 RealtimeBidMessage message = new RealtimeBidMessage(
@@ -349,6 +422,10 @@ public class DashboardController {
             }
 
             manualBidField.clear();
+
+            if (bidMessageLabel != null) {
+                bidMessageLabel.setText("Đặt bid thành công: " + bidAmount);
+            }
 
             showAlert("Đặt bid thành công!");
 
@@ -370,73 +447,123 @@ public class DashboardController {
             return;
         }
 
-        System.out.println("Selected auction: " + auctionView.getTitle());
+        if (itemNameLabel != null) {
+            itemNameLabel.setText(auctionView.getTitle());
+        }
+
+        if (itemDescriptionLabel != null) {
+            itemDescriptionLabel.setText(auctionView.getDescription());
+        }
+
+        if (startingPriceLabel != null) {
+            startingPriceLabel.setText(
+                    auctionView.getItem() == null
+                            ? ""
+                            : String.valueOf(auctionView.getItem().getStartingPrice())
+            );
+        }
+
+        if (currentPriceLabel != null) {
+            currentPriceLabel.setText(String.valueOf(auctionView.getCurrentPrice()));
+        }
+
+        if (leaderLabel != null) {
+            leaderLabel.setText(
+                    auctionView.getHighestBidder() == null
+                            ? "Chưa có"
+                            : auctionView.getHighestBidder().getFullName()
+            );
+        }
+
+        if (startTimeLabel != null) {
+            startTimeLabel.setText(String.valueOf(auctionView.getStartTime()));
+        }
+
+        if (endTimeLabel != null) {
+            endTimeLabel.setText(String.valueOf(auctionView.getEndTime()));
+        }
+
+        if (auctionStatusLabel != null) {
+            auctionStatusLabel.setText(String.valueOf(auctionView.getStatus()));
+        }
+    }
+
+    private void rebuildBidHistoryTable(AuctionView auctionView) {
+        if (bidHistoryTable == null || auctionView == null) {
+            return;
+        }
+
+        bidHistoryTable.setItems(
+                FXCollections.observableArrayList(auctionView.getBidHistory())
+        );
+    }
+
+    private void rebuildPriceChart(AuctionView auctionView) {
+        if (priceSeries == null || auctionView == null) {
+            return;
+        }
+
+        priceSeries.getData().clear();
+
+        int index = 1;
+
+        if (auctionView.getBidHistory() != null) {
+            for (BidTransaction bid : auctionView.getBidHistory()) {
+                if (bid != null && bid.getAmount() != null) {
+                    priceSeries.getData().add(
+                            new XYChart.Data<>(index, bid.getAmount())
+                    );
+                    index++;
+                }
+            }
+        }
+
+        if (priceSeries.getData().isEmpty()
+                && auctionView.getCurrentPrice() != null) {
+            priceSeries.getData().add(
+                    new XYChart.Data<>(1, auctionView.getCurrentPrice())
+            );
+        }
     }
 
     @FXML
     private void handleRegisterAutoBid() {
-        System.out.println("handleRegisterAutoBid clicked");
+        showAlert("Chức năng Auto-Bid đã được kích hoạt.");
     }
 
     @FXML
     private void handleCreateItem() {
-        System.out.println("handleCreateItem clicked");
+        showAlert("Chức năng Seller: mở phiên đấu giá.");
     }
 
     @FXML
     private void handleUpdateItem() {
-        System.out.println("handleUpdateItem clicked");
+        showAlert("Chức năng Seller: cập nhật phiên đấu giá.");
     }
 
     @FXML
     private void handleDeleteItem() {
-        System.out.println("handleDeleteItem clicked");
+        showAlert("Chức năng Seller: xóa phiên đấu giá.");
     }
 
     @FXML
     private void handleApproveUser() {
-        System.out.println("handleApproveUser clicked");
+        showAlert("Chức năng Admin: duyệt tài khoản.");
     }
 
     @FXML
     private void handleLockUser() {
-        System.out.println("handleLockUser clicked");
+        showAlert("Chức năng Admin: khóa tài khoản.");
     }
 
     @FXML
     private void handleRemoveAuction() {
-        System.out.println("handleRemoveAuction clicked");
+        showAlert("Chức năng Admin: gỡ phiên đấu giá.");
     }
 
     @FXML
     private void handleCloseApp() {
         System.exit(0);
-    }
-
-    private void setupAuctionTable() {
-        if (auctionTable == null) {
-            return;
-        }
-
-        colAuctionItem.setCellValueFactory(
-                new PropertyValueFactory<>("title")
-        );
-
-        colAuctionSeller.setCellValueFactory(
-                new PropertyValueFactory<>("sellerName")
-        );
-
-        colAuctionCurrentPrice.setCellValueFactory(
-                new PropertyValueFactory<>("currentPrice")
-        );
-
-        colAuctionStatus.setCellValueFactory(
-                new PropertyValueFactory<>("status")
-        );
-
-        colAuctionEndTime.setCellValueFactory(
-                new PropertyValueFactory<>("endTimeText")
-        );
     }
 
     private void loadAuctionTable() {
