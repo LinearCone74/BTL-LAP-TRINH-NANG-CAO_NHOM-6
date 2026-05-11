@@ -11,6 +11,8 @@ import com.auction.realtime.RealtimeBidServer;
 import com.auction.repository.JdbcAuctionRepository;
 import com.auction.service.AuctionClosingService;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -31,19 +33,22 @@ public class DashboardController {
 
     private static final int REALTIME_PORT = 5555;
 
+    private final NumberFormat vnFormat =
+            NumberFormat.getInstance(new Locale("vi", "VN"));
+
     @FXML private TextField manualBidField;
 
     @FXML private TableView<AuctionView> auctionTable;
     @FXML private TableColumn<AuctionView, String> colAuctionItem;
     @FXML private TableColumn<AuctionView, String> colAuctionSeller;
-    @FXML private TableColumn<AuctionView, BigDecimal> colAuctionCurrentPrice;
+    @FXML private TableColumn<AuctionView, String> colAuctionCurrentPrice;
     @FXML private TableColumn<AuctionView, String> colAuctionStatus;
     @FXML private TableColumn<AuctionView, String> colAuctionEndTime;
 
     @FXML private TableView<BidTransaction> bidHistoryTable;
     @FXML private TableColumn<BidTransaction, Object> colBidTime;
     @FXML private TableColumn<BidTransaction, String> colBidder;
-    @FXML private TableColumn<BidTransaction, BigDecimal> colBidAmount;
+    @FXML private TableColumn<BidTransaction, String> colBidAmount;
     @FXML private TableColumn<BidTransaction, String> colBidType;
 
     @FXML private Label welcomeLabel;
@@ -103,6 +108,14 @@ public class DashboardController {
                             + " (" + currentUser.getRole() + ")"
             );
         }
+    }
+
+    private String formatMoney(BigDecimal amount) {
+        if (amount == null) {
+            return "";
+        }
+
+        return vnFormat.format(amount);
     }
 
     private void startAuctionMonitor() {
@@ -265,7 +278,13 @@ public class DashboardController {
 
         colAuctionItem.setCellValueFactory(new PropertyValueFactory<>("title"));
         colAuctionSeller.setCellValueFactory(new PropertyValueFactory<>("sellerName"));
-        colAuctionCurrentPrice.setCellValueFactory(new PropertyValueFactory<>("currentPrice"));
+
+        colAuctionCurrentPrice.setCellValueFactory(cellData ->
+                new SimpleStringProperty(
+                        formatMoney(cellData.getValue().getCurrentPrice())
+                )
+        );
+
         colAuctionStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         colAuctionEndTime.setCellValueFactory(new PropertyValueFactory<>("endTimeText"));
     }
@@ -286,7 +305,9 @@ public class DashboardController {
         });
 
         colBidAmount.setCellValueFactory(cellData ->
-                new SimpleObjectProperty<>(cellData.getValue().getAmount())
+                new SimpleStringProperty(
+                        formatMoney(cellData.getValue().getAmount())
+                )
         );
 
         colBidType.setCellValueFactory(cellData ->
@@ -424,7 +445,7 @@ public class DashboardController {
             manualBidField.clear();
 
             if (bidMessageLabel != null) {
-                bidMessageLabel.setText("Đặt bid thành công: " + bidAmount);
+                bidMessageLabel.setText("Đặt bid thành công: " + formatMoney(bidAmount));
             }
 
             showAlert("Đặt bid thành công!");
@@ -459,12 +480,12 @@ public class DashboardController {
             startingPriceLabel.setText(
                     auctionView.getItem() == null
                             ? ""
-                            : String.valueOf(auctionView.getItem().getStartingPrice())
+                            : formatMoney(auctionView.getItem().getStartingPrice())
             );
         }
 
         if (currentPriceLabel != null) {
-            currentPriceLabel.setText(String.valueOf(auctionView.getCurrentPrice()));
+            currentPriceLabel.setText(formatMoney(auctionView.getCurrentPrice()));
         }
 
         if (leaderLabel != null) {
