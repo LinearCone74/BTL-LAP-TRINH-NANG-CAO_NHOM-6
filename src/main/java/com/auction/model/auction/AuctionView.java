@@ -158,7 +158,7 @@ public class AuctionView extends Entity {
     }
 
     public List<BidTransaction> getBidHistory() {
-        return Collections.unmodifiableList(bidHistory);
+        return bidHistory;
     }
 
     public Map<String, AutoBidConfig> getAutoBidConfigs() {
