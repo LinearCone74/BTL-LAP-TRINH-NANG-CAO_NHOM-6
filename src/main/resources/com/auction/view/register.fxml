@@ -1,141 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.auction.controller.RegisterController"
-            styleClass="auth-root">
+            prefWidth="1200"
+            prefHeight="800"
+            styleClass="login-root">
 
     <center>
-        <GridPane styleClass="auth-layout">
-            <columnConstraints>
-                <ColumnConstraints percentWidth="40"/>
-                <ColumnConstraints percentWidth="60"/>
-            </columnConstraints>
+        <HBox alignment="CENTER" styleClass="login-shell">
+            <children>
 
-            <VBox GridPane.columnIndex="0"
-                  alignment="CENTER_LEFT"
-                  spacing="30"
-                  styleClass="auth-brand-panel">
+                <VBox spacing="18" styleClass="login-brand">
+                    <children>
+                        <Label text="🔨" styleClass="login-icon"/>
 
-                <Region prefHeight="26"/>
+                        <Label text="AuctionHub"
+                               styleClass="login-title"
+                               maxWidth="Infinity"/>
 
-                <Label text="AuctionHub"
-                       styleClass="brand-logo"/>
+                        <Label text="Marketplace đấu giá thời gian thực"
+                               wrapText="true"
+                               styleClass="login-subtitle"/>
 
-                <Label text="Create enterprise auction account"
-                       styleClass="brand-description"/>
+                        <Pane VBox.vgrow="ALWAYS"/>
 
-                <VBox spacing="15"
-                      styleClass="brand-features">
-                    <Label text="• Manage auction lifecycle"
-                           styleClass="brand-feature"/>
-                    <Label text="• Participate in live bidding"
-                           styleClass="brand-feature"/>
-                    <Label text="• Monitor transaction history"
-                           styleClass="brand-feature"/>
-                    <Label text="• Secure marketplace access"
-                           styleClass="brand-feature"/>
+                        <Label text="List items • Place bids • Close deals"
+                               styleClass="login-slogan"/>
+                    </children>
                 </VBox>
 
-                <Region VBox.vgrow="ALWAYS"/>
+                <VBox spacing="10" styleClass="login-form">
+                    <children>
 
-                <Label text="Secure Marketplace System"
-                       styleClass="brand-footer"/>
+                        <VBox spacing="4" styleClass="login-header">
+                            <children>
+                                <Label text="Tạo tài khoản"
+                                       styleClass="form-title"/>
 
-                <padding>
-                    <Insets top="88" right="64" bottom="72" left="72"/>
-                </padding>
-            </VBox>
+                                <Label text="Đăng ký để mua, bán và tham gia đấu giá"
+                                       styleClass="form-subtitle"/>
+                            </children>
+                        </VBox>
 
-            <StackPane GridPane.columnIndex="1"
-                       styleClass="auth-form-area">
+                        <VBox spacing="5">
+                            <children>
+                                <Label text="Tên đăng nhập" styleClass="field-label"/>
+                                <TextField fx:id="usernameField" promptText="Nhập username"/>
+                            </children>
+                        </VBox>
 
-                <VBox alignment="CENTER_LEFT"
-                      spacing="0"
-                      maxWidth="480"
-                      translateY="24"
-                      styleClass="auth-form">
+                        <VBox spacing="5">
+                            <children>
+                                <Label text="Mật khẩu" styleClass="field-label"/>
+                                <PasswordField fx:id="passwordField" promptText="Nhập mật khẩu"/>
+                            </children>
+                        </VBox>
 
-                    <Label text="Register"
-                           styleClass="form-title"/>
+                        <VBox spacing="5">
+                            <children>
+                                <Label text="Họ và tên" styleClass="field-label"/>
+                                <TextField fx:id="fullNameField" promptText="Nhập họ tên"/>
+                            </children>
+                        </VBox>
 
-                    <Label text="Create a new AuctionHub account"
-                           styleClass="form-subtitle"/>
+                        <VBox spacing="5">
+                            <children>
+                                <Label text="Email" styleClass="field-label"/>
+                                <TextField fx:id="emailField" promptText="Nhập email"/>
+                            </children>
+                        </VBox>
 
-                    <Region prefHeight="34"/>
+                        <VBox spacing="5">
+                            <children>
+                                <Label text="Vai trò" styleClass="field-label"/>
+                                <ComboBox fx:id="roleComboBox"
+                                          promptText="Chọn vai trò"
+                                          maxWidth="Infinity"/>
+                            </children>
+                        </VBox>
 
-                    <Label text="Username"
-                           styleClass="field-label"/>
-                    <Region prefHeight="8"/>
-                    <TextField fx:id="usernameField"
-                               promptText="Username"
-                               styleClass="auth-input"/>
+                        <Label fx:id="messageLabel" styleClass="success-label" wrapText="true"/>
 
-                    <Region prefHeight="22"/>
+                        <HBox spacing="12">
+                            <children>
+                                <Button text="Tạo tài khoản"
+                                        onAction="#handleRegister"
+                                        styleClass="primary-button"
+                                        HBox.hgrow="ALWAYS"
+                                        maxWidth="Infinity"/>
 
-                    <Label text="Password"
-                           styleClass="field-label"/>
-                    <Region prefHeight="8"/>
-                    <PasswordField fx:id="passwordField"
-                                   promptText="Password"
-                                   styleClass="auth-input"/>
+                                <Button text="Về đăng nhập"
+                                        onAction="#goToLogin"
+                                        styleClass="secondary-button"
+                                        HBox.hgrow="ALWAYS"
+                                        maxWidth="Infinity"/>
+                            </children>
+                        </HBox>
 
-                    <Region prefHeight="22"/>
-
-                    <Label text="Full Name"
-                           styleClass="field-label"/>
-                    <Region prefHeight="8"/>
-                    <TextField fx:id="fullNameField"
-                               promptText="Full name"
-                               styleClass="auth-input"/>
-
-                    <Region prefHeight="22"/>
-
-                    <Label text="Email"
-                           styleClass="field-label"/>
-                    <Region prefHeight="8"/>
-                    <TextField fx:id="emailField"
-                               promptText="Email address"
-                               styleClass="auth-input"/>
-
-                    <Region prefHeight="22"/>
-
-                    <Label text="Role"
-                           styleClass="field-label"/>
-                    <Region prefHeight="8"/>
-                    <ComboBox fx:id="roleComboBox"
-                              prefWidth="260"
-                              minWidth="260"
-                              prefHeight="52"
-                              styleClass="auth-combo"/>
-
-                    <Region prefHeight="34"/>
-
-                    <Button text="Create Account"
-                            prefHeight="50"
-                            maxWidth="9999"
-                            onAction="#handleRegister"
-                            styleClass="primary-button"/>
-
-                    <Region prefHeight="12"/>
-
-                    <Button text="Back to Login"
-                            prefHeight="50"
-                            maxWidth="9999"
-                            onAction="#goToLogin"
-                            styleClass="secondary-button"/>
-
-                    <Region prefHeight="18"/>
-
-                    <Label fx:id="messageLabel"
-                           wrapText="true"
-                           styleClass="message-label"/>
+                    </children>
                 </VBox>
-            </StackPane>
-        </GridPane>
+
+            </children>
+        </HBox>
     </center>
+
 </BorderPane>
