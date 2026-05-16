@@ -1,111 +1,270 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.auction.controller.RegisterController"
             prefWidth="1200"
-            prefHeight="800"
-            styleClass="login-root">
+            prefHeight="720"
+            styleClass="auth-luxury-root"
+            stylesheets="@../style/app.css">
 
     <center>
-        <HBox alignment="CENTER" styleClass="login-shell">
+        <HBox alignment="CENTER"
+              spacing="16"
+              maxWidth="980"
+              maxHeight="600"
+              styleClass="auth-luxury-shell">
+
             <children>
 
-                <VBox spacing="18" styleClass="login-brand">
+                <!-- LEFT PANEL -->
+                <VBox alignment="CENTER"
+                      spacing="13"
+                      prefWidth="430"
+                      prefHeight="560"
+                      styleClass="auth-luxury-left">
+
                     <children>
-                        <Label text="🔨" styleClass="login-icon"/>
+                        <ImageView fitWidth="165" fitHeight="125" preserveRatio="true">
+                            <image>
+                                <Image url="@../images/auction-logo.png"/>
+                            </image>
+                        </ImageView>
 
-                        <Label text="AuctionHub"
-                               styleClass="login-title"
-                               maxWidth="Infinity"/>
+                        <Label text="AuctionHub" styleClass="auth-luxury-brand"/>
+                        <Label text="Sàn đấu giá trực tuyến" styleClass="auth-luxury-subtitle"/>
 
-                        <Label text="Marketplace đấu giá thời gian thực"
+                        <Label text="Cơ hội trong tầm tay, giá trị trong mỗi lượt Bid."
                                wrapText="true"
-                               styleClass="login-subtitle"/>
+                               styleClass="auth-luxury-desc"/>
 
-                        <Pane VBox.vgrow="ALWAYS"/>
+                        <Label text="Khám phá ngay những vật phẩm độc đáo."
+                               wrapText="true"
+                               styleClass="auth-luxury-desc"/>
 
-                        <Label text="List items • Place bids • Close deals"
-                               styleClass="login-slogan"/>
-                    </children>
-                </VBox>
+                        <Label text="Active Auctions: 1,234" styleClass="auth-luxury-active"/>
 
-                <VBox spacing="10" styleClass="login-form">
-                    <children>
-
-                        <VBox spacing="4" styleClass="login-header">
+                        <HBox alignment="CENTER" spacing="12" styleClass="auth-product-row">
                             <children>
-                                <Label text="Tạo tài khoản"
-                                       styleClass="form-title"/>
+                                <VBox alignment="CENTER" spacing="5" styleClass="auth-product-card">
+                                    <children>
+                                        <ImageView fitWidth="82" fitHeight="64" preserveRatio="false">
+                                            <image>
+                                                <Image url="@../images/watch.png"/>
+                                            </image>
+                                        </ImageView>
+                                        <Label text="330,000" styleClass="auth-product-price"/>
+                                    </children>
+                                </VBox>
 
-                                <Label text="Đăng ký để mua, bán và tham gia đấu giá"
-                                       styleClass="form-subtitle"/>
-                            </children>
-                        </VBox>
+                                <VBox alignment="CENTER" spacing="5" styleClass="auth-product-card">
+                                    <children>
+                                        <ImageView fitWidth="82" fitHeight="64" preserveRatio="false">
+                                            <image>
+                                                <Image url="@../images/car.png"/>
+                                            </image>
+                                        </ImageView>
+                                        <Label text="330,000" styleClass="auth-product-price"/>
+                                    </children>
+                                </VBox>
 
-                        <VBox spacing="5">
-                            <children>
-                                <Label text="Tên đăng nhập" styleClass="field-label"/>
-                                <TextField fx:id="usernameField" promptText="Nhập username"/>
-                            </children>
-                        </VBox>
-
-                        <VBox spacing="5">
-                            <children>
-                                <Label text="Mật khẩu" styleClass="field-label"/>
-                                <PasswordField fx:id="passwordField" promptText="Nhập mật khẩu"/>
-                            </children>
-                        </VBox>
-
-                        <VBox spacing="5">
-                            <children>
-                                <Label text="Họ và tên" styleClass="field-label"/>
-                                <TextField fx:id="fullNameField" promptText="Nhập họ tên"/>
-                            </children>
-                        </VBox>
-
-                        <VBox spacing="5">
-                            <children>
-                                <Label text="Email" styleClass="field-label"/>
-                                <TextField fx:id="emailField" promptText="Nhập email"/>
-                            </children>
-                        </VBox>
-
-                        <VBox spacing="5">
-                            <children>
-                                <Label text="Vai trò" styleClass="field-label"/>
-                                <ComboBox fx:id="roleComboBox"
-                                          promptText="Chọn vai trò"
-                                          maxWidth="Infinity"/>
-                            </children>
-                        </VBox>
-
-                        <Label fx:id="messageLabel" styleClass="success-label" wrapText="true"/>
-
-                        <HBox spacing="12">
-                            <children>
-                                <Button text="Tạo tài khoản"
-                                        onAction="#handleRegister"
-                                        styleClass="primary-button"
-                                        HBox.hgrow="ALWAYS"
-                                        maxWidth="Infinity"/>
-
-                                <Button text="Về đăng nhập"
-                                        onAction="#goToLogin"
-                                        styleClass="secondary-button"
-                                        HBox.hgrow="ALWAYS"
-                                        maxWidth="Infinity"/>
+                                <VBox alignment="CENTER" spacing="5" styleClass="auth-product-card">
+                                    <children>
+                                        <ImageView fitWidth="82" fitHeight="64" preserveRatio="false">
+                                            <image>
+                                                <Image url="@../images/diamond.png"/>
+                                            </image>
+                                        </ImageView>
+                                        <Label text="330,000" styleClass="auth-product-price"/>
+                                    </children>
+                                </VBox>
                             </children>
                         </HBox>
 
+                        <Region VBox.vgrow="ALWAYS"/>
+
+                        <Label text="Nhanh - Công bằng - Thông minh"
+                               styleClass="auth-luxury-slogan"/>
                     </children>
+
+                    <padding>
+                        <Insets top="22" right="28" bottom="32" left="28"/>
+                    </padding>
                 </VBox>
 
+                <!-- RIGHT REGISTER FORM -->
+                <VBox alignment="CENTER_LEFT"
+                      spacing="7"
+                      prefWidth="500"
+                      prefHeight="560"
+                      styleClass="auth-luxury-form">
+
+                    <children>
+                        <Label text="Đăng ký tài khoản" styleClass="auth-form-title"/>
+
+                        <Label text="Tham gia sàn đấu giá để mua, bán và đấu giá các vật phẩm độc đáo."
+                               wrapText="true"
+                               maxWidth="420"
+                               styleClass="auth-smell-text"/>
+
+                        <Label text="(Join the auction house to buy, sell, and bid on unique items.)"
+                               wrapText="true"
+                               maxWidth="420"
+                               styleClass="auth-smell-text"/>
+
+                        <!-- USERNAME -->
+                        <VBox spacing="4">
+                            <children>
+                                <Label text="Tên đăng nhập" styleClass="auth-field-label"/>
+
+                                <TextField fx:id="usernameField"
+                                           promptText="Nhập tên đăng nhập"
+                                           maxWidth="Infinity"
+                                           styleClass="auth-input"/>
+                            </children>
+                        </VBox>
+
+                        <!-- FULL NAME -->
+                        <VBox spacing="4">
+                            <children>
+                                <Label text="Họ và tên" styleClass="auth-field-label"/>
+
+                                <TextField fx:id="fullNameField"
+                                           promptText="Nhập họ và tên"
+                                           maxWidth="Infinity"
+                                           styleClass="auth-input"/>
+                            </children>
+                        </VBox>
+
+                        <!-- EMAIL -->
+                        <VBox spacing="4">
+                            <children>
+                                <Label text="Email" styleClass="auth-field-label"/>
+
+                                <TextField fx:id="emailField"
+                                           promptText="Nhập email"
+                                           maxWidth="Infinity"
+                                           styleClass="auth-input"/>
+                            </children>
+                        </VBox>
+
+                        <!-- PASSWORD WITH EYE BUTTON -->
+                        <VBox spacing="4">
+                            <children>
+                                <Label text="Mật khẩu" styleClass="auth-field-label"/>
+
+                                <StackPane maxWidth="Infinity">
+                                    <children>
+                                        <PasswordField fx:id="passwordField"
+                                                       promptText="Nhập mật khẩu"
+                                                       maxWidth="Infinity"
+                                                       styleClass="auth-input password-input"/>
+
+                                        <TextField fx:id="visiblePasswordField"
+                                                   promptText="Nhập mật khẩu"
+                                                   maxWidth="Infinity"
+                                                   visible="false"
+                                                   managed="false"
+                                                   styleClass="auth-input password-input"/>
+
+                                        <Button fx:id="togglePasswordButton"
+                                                text="👁"
+                                                onAction="#handleTogglePassword"
+                                                styleClass="eye-button"
+                                                StackPane.alignment="CENTER_RIGHT"/>
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </VBox>
+
+                        <!-- CONFIRM PASSWORD WITH EYE BUTTON -->
+                        <VBox spacing="4">
+                            <children>
+                                <Label text="Xác nhận mật khẩu" styleClass="auth-field-label"/>
+
+                                <StackPane maxWidth="Infinity">
+                                    <children>
+                                        <PasswordField fx:id="confirmPasswordField"
+                                                       promptText="Nhập lại mật khẩu"
+                                                       maxWidth="Infinity"
+                                                       styleClass="auth-input password-input"/>
+
+                                        <TextField fx:id="visibleConfirmPasswordField"
+                                                   promptText="Nhập lại mật khẩu"
+                                                   maxWidth="Infinity"
+                                                   visible="false"
+                                                   managed="false"
+                                                   styleClass="auth-input password-input"/>
+
+                                        <Button fx:id="toggleConfirmPasswordButton"
+                                                text="👁"
+                                                onAction="#handleToggleConfirmPassword"
+                                                styleClass="eye-button"
+                                                StackPane.alignment="CENTER_RIGHT"/>
+                                    </children>
+                                </StackPane>
+                            </children>
+                        </VBox>
+
+                        <!-- ROLE -->
+                        <VBox spacing="4">
+                            <children>
+                                <Label text="Vai trò" styleClass="auth-field-label"/>
+
+                                <ComboBox fx:id="roleComboBox"
+                                          maxWidth="Infinity"
+                                          styleClass="auth-combo"/>
+                            </children>
+                        </VBox>
+
+                        <!-- BUTTONS -->
+                        <HBox spacing="14" alignment="CENTER">
+                            <children>
+                                <Button text="Tạo tài khoản"
+                                        onAction="#handleRegister"
+                                        maxWidth="Infinity"
+                                        HBox.hgrow="ALWAYS"
+                                        styleClass="auth-primary-button"/>
+
+                                <Button text="Về đăng nhập"
+                                        onAction="#goToLogin"
+                                        maxWidth="Infinity"
+                                        HBox.hgrow="ALWAYS"
+                                        styleClass="auth-secondary-button"/>
+                            </children>
+                        </HBox>
+
+                        <Label fx:id="messageLabel"
+                               wrapText="true"
+                               styleClass="error-label"/>
+                    </children>
+
+                    <padding>
+                        <Insets top="34" right="48" bottom="34" left="48"/>
+                    </padding>
+                </VBox>
             </children>
         </HBox>
     </center>
 
+    <bottom>
+        <ImageView fitWidth="78"
+                   fitHeight="78"
+                   preserveRatio="true"
+                   BorderPane.alignment="BOTTOM_RIGHT">
+            <image>
+                <Image url="@../images/crystal.png"/>
+            </image>
+
+            <BorderPane.margin>
+                <Insets right="28" bottom="20"/>
+            </BorderPane.margin>
+        </ImageView>
+    </bottom>
 </BorderPane>
