@@ -104,7 +104,7 @@
                     </content>
                 </Tab>
 
-                <Tab text="Đặt bid realtime">
+                <Tab fx:id="bidRealtimeTab" text="Đặt bid realtime">
                     <content>
                         <ScrollPane fitToWidth="true" fitToHeight="true">
                             <content>

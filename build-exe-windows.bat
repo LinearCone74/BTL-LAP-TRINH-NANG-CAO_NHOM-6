@@ -21,13 +21,14 @@ echo BUILD APP IMAGE
 echo ============================
 
 jpackage ^
- --type app-image ^
- --name UngDungDauGia ^
- --input target ^
- --main-jar dau-gia-truc-tuyen-1.0-SNAPSHOT.jar ^
- --main-class com.auction.AuctionApp ^
- --dest dist ^
- --win-console
+  --type app-image ^
+  --name UngDungDauGia ^
+  --input target ^
+  --main-jar dau-gia-truc-tuyen-1.0-SNAPSHOT.jar ^
+  --main-class com.auction.AuctionApp ^
+  --dest dist ^
+  --module-path "C:\javafx-jmods-17.0.15" ^
+  --add-modules javafx.controls,javafx.fxml,javafx.graphics
 
 if %errorlevel% neq 0 (
     echo.

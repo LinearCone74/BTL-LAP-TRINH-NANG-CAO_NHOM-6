@@ -1,5 +1,13 @@
 package com.auction.controller;
 
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.geometry.Pos;
+import javafx.scene.control.TableCell;
+import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import com.auction.app.AppContext;
 import com.auction.model.auction.AuctionView;
 import com.auction.model.user.User;
@@ -18,6 +26,37 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.math.BigDecimal;
 
 public class DashboardController {
+    @FXML
+    private TabPane mainTabPane;
+
+    @FXML
+    private Tab bidRealtimeTab;
+
+    @FXML
+    private Label itemNameLabel;
+
+    @FXML
+    private Label itemDescriptionLabel;
+
+    @FXML
+    private Label startingPriceLabel;
+
+    @FXML
+    private Label currentPriceLabel;
+
+    @FXML
+    private Label leaderLabel;
+
+    @FXML
+    private Label startTimeLabel;
+
+    @FXML
+    private Label endTimeLabel;
+
+    @FXML
+    private Label statusLabel;
+
+    private AuctionView selectedAuctionForBid;
 
     @FXML
     private TextField manualBidField;
@@ -32,7 +71,7 @@ public class DashboardController {
     private TableColumn<AuctionView, String> colAuctionSeller;
 
     @FXML
-    private TableColumn<AuctionView, BigDecimal> colAuctionCurrentPrice;
+    private TableColumn<AuctionView, String> colAuctionCurrentPrice;
 
     @FXML
     private TableColumn<AuctionView, String> colAuctionStatus;
@@ -52,8 +91,85 @@ public class DashboardController {
         this.appContext = appContext;
     }
 
+    private void updateBidRealtimeTab(AuctionView auction) {
+        if (auction == null) {
+            return;
+        }
+
+        itemNameLabel.setText(auction.getTitle());
+
+        itemDescriptionLabel.setText(
+                auction.getDescription() == null ? "" : auction.getDescription()
+        );
+
+        // Nếu AuctionView chưa có startingPrice thì để tạm bằng giá hiện tại
+        startingPriceLabel.setText(formatMoney(auction.getCurrentPrice()));
+
+        currentPriceLabel.setText(formatMoney(auction.getCurrentPrice()));
+
+        // Nếu chưa có người dẫn đầu thì hiển thị tạm
+        leaderLabel.setText("Chưa có");
+
+        // Nếu chưa có startTime thì để trống
+        startTimeLabel.setText("");
+
+        endTimeLabel.setText(formatDateTime(auction.getEndTimeText()));
+
+        statusLabel.setText(auction.getStatus().toString());
+    }
+
+    private String formatMoney(BigDecimal amount) {
+        if (amount == null) {
+            return "";
+        }
+
+        NumberFormat formatter =
+                NumberFormat.getNumberInstance(new Locale("vi", "VN"));
+
+        return formatter.format(amount) + " VNĐ";
+    }
+
+    private String formatDateTime(String rawDateTime) {
+        if (rawDateTime == null || rawDateTime.isBlank()) {
+            return "";
+        }
+
+        try {
+            DateTimeFormatter inputFormatter =
+                    DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
+            DateTimeFormatter outputFormatter =
+                    DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+            LocalDateTime dateTime =
+                    LocalDateTime.parse(rawDateTime, inputFormatter);
+
+            return dateTime.format(outputFormatter);
+        } catch (Exception e) {
+            return rawDateTime;
+        }
+    }
+
+    private void setupAuctionTableClick() {
+        auctionTable.setOnMouseClicked(event -> {
+            AuctionView selectedAuction =
+                    auctionTable.getSelectionModel().getSelectedItem();
+
+            if (selectedAuction == null) {
+                return;
+            }
+
+            selectedAuctionForBid = selectedAuction;
+
+            updateBidRealtimeTab(selectedAuctionForBid);
+
+            mainTabPane.getSelectionModel().select(bidRealtimeTab);
+        });
+    }
+
     @FXML
     public void initialize() {
+        setupAuctionTableClick();
         openAllTabsForDemo();
 
         if (auctionTable != null) {
@@ -198,17 +314,50 @@ public class DashboardController {
                 new PropertyValueFactory<>("sellerName")
         );
 
-        colAuctionCurrentPrice.setCellValueFactory(
-                new PropertyValueFactory<>("currentPrice")
-        );
+        NumberFormat currencyFormat =
+                NumberFormat.getNumberInstance(new Locale("vi", "VN"));
+
+        colAuctionCurrentPrice.setCellValueFactory(cellData -> {
+            BigDecimal price = cellData.getValue().getCurrentPrice();
+
+            if (price == null) {
+                return new SimpleStringProperty("");
+            }
+
+            return new SimpleStringProperty(currencyFormat.format(price) + " VNĐ");
+        });
 
         colAuctionStatus.setCellValueFactory(
                 new PropertyValueFactory<>("status")
         );
+        centerColumn(colAuctionItem);
+        centerColumn(colAuctionSeller);
+        centerColumn(colAuctionCurrentPrice);
+        centerColumn(colAuctionStatus);
+        centerColumn(colAuctionEndTime);
 
-        colAuctionEndTime.setCellValueFactory(
-                new PropertyValueFactory<>("endTime")
-        );
+        DateTimeFormatter inputFormatter =
+                DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+
+        DateTimeFormatter outputFormatter =
+                DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+        colAuctionEndTime.setCellValueFactory(cellData -> {
+            String rawEndTime = cellData.getValue().getEndTimeText();
+
+            if (rawEndTime == null || rawEndTime.isBlank()) {
+                return new SimpleStringProperty("");
+            }
+
+            try {
+                LocalDateTime parsedTime =
+                        LocalDateTime.parse(rawEndTime, inputFormatter);
+
+                return new SimpleStringProperty(parsedTime.format(outputFormatter));
+            } catch (Exception e) {
+                return new SimpleStringProperty(rawEndTime);
+            }
+        });
     }
 
     private void loadAuctionTable() {
@@ -226,5 +375,25 @@ public class DashboardController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private <T> void centerColumn(TableColumn<AuctionView, T> column) {
+        column.setCellFactory(tc -> {
+            TableCell<AuctionView, T> cell = new TableCell<>() {
+                @Override
+                protected void updateItem(T item, boolean empty) {
+                    super.updateItem(item, empty);
+
+                    if (empty || item == null) {
+                        setText(null);
+                    } else {
+                        setText(item.toString());
+                    }
+                }
+            };
+
+            cell.setAlignment(Pos.CENTER);
+            return cell;
+        });
     }
 }
