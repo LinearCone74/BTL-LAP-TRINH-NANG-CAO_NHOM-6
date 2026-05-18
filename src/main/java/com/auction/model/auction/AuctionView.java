@@ -33,6 +33,7 @@ public class AuctionView extends Entity {
     private String description;
     private String sellerName;
     private String endTimeText;
+    private String highestBidderName;
 
     private final List<BidTransaction> bidHistory = new ArrayList<>();
     private final Map<String, AutoBidConfig> autoBidConfigs = new LinkedHashMap<>();
@@ -155,6 +156,17 @@ public class AuctionView extends Entity {
 
     public String getEndTimeText() {
         return endTimeText != null ? endTimeText : String.valueOf(endTime);
+    }
+
+    public String getHighestBidderName() {
+        if (highestBidderName != null && !highestBidderName.isBlank()) {
+            return highestBidderName;
+        }
+        return highestBidder == null ? "" : highestBidder.getUsername();
+    }
+
+    public void setHighestBidderName(String highestBidderName) {
+        this.highestBidderName = highestBidderName;
     }
 
     public List<BidTransaction> getBidHistory() {
