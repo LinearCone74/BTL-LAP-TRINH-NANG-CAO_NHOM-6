@@ -4,6 +4,7 @@ import com.auction.app.AppContext;
 import com.auction.model.auction.AuctionView;
 import com.auction.model.user.User;
 import com.auction.repository.RealtimeAuctionRepository;
+import com.auction.socket.AuctionSocketClient;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -33,7 +34,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 public class DashboardController {
-    private static final int REALTIME_REFRESH_SECONDS = 2;
+    private static final int REALTIME_REFRESH_SECONDS = 30; // fallback polling; socket se cap nhat ngay khi co bid moi
+    private static final String SOCKET_HOST = System.getProperty("auction.socket.host", "localhost");
+    private static final int SOCKET_PORT = Integer.getInteger("auction.socket.port", 5555);
 
     @FXML private TabPane mainTabPane;
     @FXML private Tab bidRealtimeTab;
@@ -69,6 +72,8 @@ public class DashboardController {
     private final AtomicBoolean refreshInProgress = new AtomicBoolean(false);
 
     private ScheduledExecutorService refreshExecutor;
+    private AuctionSocketClient socketClient;
+    private volatile Runnable pendingSocketSuccessAction;
     private AuctionView selectedAuctionForBid;
     private volatile Integer selectedAuctionIdForBid;
     private volatile int lastAuctionTableHash = Integer.MIN_VALUE;
@@ -84,6 +89,7 @@ public class DashboardController {
         setupAuctionTable();
         setupBidHistoryTable();
         setupAuctionTableClick();
+        startSocketClient();
         startRealtimeRefresh();
         submitRefreshNow();
 
@@ -327,6 +333,10 @@ public class DashboardController {
             return;
         }
 
+        if (sendBidViaSocket(auctionId, bidAmount, () -> manualBidField.clear())) {
+            return;
+        }
+
         runDatabaseAction(
                 () -> realtimeRepo.placeBid(auctionId, getCurrentUsername(), bidAmount),
                 () -> manualBidField.clear()
@@ -351,13 +361,82 @@ public class DashboardController {
             return;
         }
 
+        Runnable clearAutoBidFields = () -> {
+            autoBidMaxField.clear();
+            autoBidIncrementField.clear();
+        };
+
+        if (sendAutoBidViaSocket(auctionId, maxBid, increment, clearAutoBidFields)) {
+            return;
+        }
+
         runDatabaseAction(
                 () -> realtimeRepo.registerAutoBid(auctionId, getCurrentUsername(), maxBid, increment),
-                () -> {
-                    autoBidMaxField.clear();
-                    autoBidIncrementField.clear();
-                }
+                clearAutoBidFields
         );
+    }
+
+
+    private void startSocketClient() {
+        if (socketClient != null && socketClient.isConnected()) {
+            return;
+        }
+        socketClient = new AuctionSocketClient(SOCKET_HOST, SOCKET_PORT);
+        socketClient.setStatusListener(message -> Platform.runLater(() -> setBidMessage(message)));
+        socketClient.setUpdateListener(auctionId -> {
+            Integer selectedId = selectedAuctionIdForBid;
+            lastAuctionTableHash = Integer.MIN_VALUE;
+            if (selectedId != null && selectedId == auctionId) {
+                lastBidHistoryVersion = Integer.MIN_VALUE;
+            }
+            submitRefreshNow();
+        });
+        socketClient.setResultListener(result -> Platform.runLater(() -> {
+            setBidMessage(result.message());
+            if (result.success()) {
+                Runnable successAction = pendingSocketSuccessAction;
+                pendingSocketSuccessAction = null;
+                if (successAction != null) {
+                    successAction.run();
+                }
+                lastAuctionTableHash = Integer.MIN_VALUE;
+                lastBidHistoryVersion = Integer.MIN_VALUE;
+                submitRefreshNow();
+            }
+        }));
+        socketClient.connect();
+    }
+
+    private boolean sendBidViaSocket(int auctionId, BigDecimal amount, Runnable onSuccess) {
+        if (socketClient == null || !socketClient.isConnected()) {
+            return false;
+        }
+        try {
+            setBidMessage("Đang gửi bid qua socket server...");
+            pendingSocketSuccessAction = onSuccess;
+            socketClient.sendBid(auctionId, getCurrentUsername(), amount);
+            return true;
+        } catch (Exception e) {
+            pendingSocketSuccessAction = null;
+            setBidMessage("Socket lỗi, chuyển sang DB fallback: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean sendAutoBidViaSocket(int auctionId, BigDecimal maxBid, BigDecimal increment, Runnable onSuccess) {
+        if (socketClient == null || !socketClient.isConnected()) {
+            return false;
+        }
+        try {
+            setBidMessage("Đang gửi Auto-Bid qua socket server...");
+            pendingSocketSuccessAction = onSuccess;
+            socketClient.sendAutoBid(auctionId, getCurrentUsername(), maxBid, increment);
+            return true;
+        } catch (Exception e) {
+            pendingSocketSuccessAction = null;
+            setBidMessage("Socket lỗi, chuyển sang DB fallback: " + e.getMessage());
+            return false;
+        }
     }
 
     private void runDatabaseAction(Supplier<RealtimeAuctionRepository.BidResponse> action, Runnable onSuccess) {
@@ -468,6 +547,10 @@ public class DashboardController {
         if (refreshExecutor != null) {
             refreshExecutor.shutdownNow();
             refreshExecutor = null;
+        }
+        if (socketClient != null) {
+            socketClient.close();
+            socketClient = null;
         }
     }
 
