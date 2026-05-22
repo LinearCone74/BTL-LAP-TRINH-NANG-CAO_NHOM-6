@@ -1,5 +1,5 @@
 /* =========================
-   GLOBAL
+GLOBAL
 ========================= */
 
 .root {
@@ -616,4 +616,386 @@
 
 .eye-button:hover {
     -fx-text-fill: #2563eb;
+}
+/* =========================================================
+   DASHBOARD LUXURY UI - thêm xuống cuối app.css
+   Đồng bộ màu với login/register: marble + navy + cream + gold
+========================================================= */
+
+.dashboard-luxury-root {
+    -fx-background-color: #f8fafc;
+    -fx-background-image: url("../images/marble-bg.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-font-family: "Segoe UI", "Arial";
+}
+
+.dash-topbar {
+    -fx-background-color: linear-gradient(to right, #0b1220, #111827);
+    -fx-border-color: transparent transparent rgba(245, 158, 11, 0.35) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.dash-brand {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #facc15;
+}
+
+.dash-brand-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #e5e7eb;
+}
+
+.dash-hero {
+    -fx-background-color: rgba(15, 23, 42, 0.90);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 16, 0.25, 0, 4);
+}
+
+.dash-page-title {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.dash-welcome {
+    -fx-font-size: 15px;
+    -fx-text-fill: #fde68a;
+}
+
+.dash-stat-card {
+    -fx-background-color: rgba(255, 255, 255, 0.10);
+    -fx-background-radius: 14;
+    -fx-border-color: rgba(250, 204, 21, 0.25);
+    -fx-border-width: 1;
+    -fx-border-radius: 14;
+    -fx-padding: 10 18;
+    -fx-min-width: 112;
+}
+
+.dash-stat-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #cbd5e1;
+}
+
+.dash-stat-value {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #facc15;
+}
+
+.dash-tabs {
+    -fx-background-color: transparent;
+    -fx-padding: 16 22 22 22;
+}
+
+.dash-tabs .tab-header-area .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.dash-tabs .tab {
+    -fx-background-color: rgba(15, 23, 42, 0.88);
+    -fx-background-radius: 14 14 0 0;
+    -fx-border-color: rgba(250, 204, 21, 0.30);
+    -fx-border-radius: 14 14 0 0;
+    -fx-padding: 8 18;
+}
+
+.dash-tabs .tab:selected {
+    -fx-background-color: linear-gradient(to bottom, #facc15, #f59e0b);
+}
+
+.dash-tabs .tab .tab-label {
+    -fx-text-fill: #f8fafc;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.dash-tabs .tab:selected .tab-label {
+    -fx-text-fill: #111827;
+}
+
+.dash-content-card {
+    -fx-background-color: rgba(255, 247, 230, 0.94);
+    -fx-background-radius: 0 20 20 20;
+    -fx-border-radius: 0 20 20 20;
+    -fx-border-color: rgba(120, 80, 20, 0.25);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 22, 0.25, 0, 7);
+}
+
+.dash-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.dash-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+.dash-section-title {
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+}
+
+.dash-card-subtitle {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+}
+
+.dash-muted {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.dash-filter-bar,
+.dash-detail-card,
+.dash-bid-card,
+.dash-form-card {
+    -fx-background-color: rgba(255, 255, 255, 0.78);
+    -fx-background-radius: 18;
+    -fx-border-color: rgba(148, 163, 184, 0.38);
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+    -fx-padding: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 12, 0.20, 0, 3);
+}
+
+.dash-table-wrap {
+    -fx-background-color: transparent;
+}
+
+.dash-input,
+.dash-choice,
+.dash-content-card .text-field,
+.dash-content-card .text-area,
+.dash-content-card .combo-box,
+.dash-content-card .choice-box {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #94a3b8;
+    -fx-border-width: 1.2;
+    -fx-padding: 9 12;
+    -fx-font-size: 14px;
+}
+
+.dash-input:focused,
+.dash-content-card .text-field:focused,
+.dash-content-card .text-area:focused,
+.dash-content-card .combo-box:focused,
+.dash-content-card .choice-box:focused {
+    -fx-border-color: #2563eb;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.30), 8, 0.2, 0, 0);
+}
+
+.dash-money-input {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.dash-primary-button {
+    -fx-background-color: linear-gradient(to bottom, #2563eb, #1d4ed8);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 11;
+    -fx-padding: 10 18;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.38), 12, 0.30, 0, 4);
+}
+
+.dash-primary-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #1d4ed8, #1e40af);
+}
+
+.dash-secondary-button {
+    -fx-background-color: linear-gradient(to bottom, #6b7280, #374151);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 11;
+    -fx-padding: 10 18;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 10, 0.25, 0, 3);
+}
+
+.dash-secondary-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #4b5563, #1f2937);
+}
+
+.dash-danger-button {
+    -fx-background-color: linear-gradient(to bottom, #ef4444, #dc2626);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 11;
+    -fx-padding: 10 18;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(220,38,38,0.30), 12, 0.30, 0, 4);
+}
+
+.dash-danger-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #dc2626, #991b1b);
+}
+
+.dash-table,
+.dash-content-card .table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(148, 163, 184, 0.35);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 14, 0.18, 0, 4);
+}
+
+.dash-table .column-header-background,
+.dash-content-card .table-view .column-header-background {
+    -fx-background-color: linear-gradient(to right, #0f172a, #111827);
+    -fx-background-radius: 16 16 0 0;
+}
+
+.dash-table .column-header,
+.dash-table .filler,
+.dash-content-card .table-view .column-header,
+.dash-content-card .table-view .filler {
+    -fx-background-color: transparent;
+}
+
+.dash-table .column-header .label,
+.dash-content-card .table-view .column-header .label {
+    -fx-text-fill: #facc15;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.dash-table .table-row-cell,
+.dash-content-card .table-view .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #f1f5f9 transparent;
+}
+
+.dash-table .table-row-cell:odd,
+.dash-content-card .table-view .table-row-cell:odd {
+    -fx-background-color: #f8fafc;
+}
+
+.dash-table .table-row-cell:hover,
+.dash-content-card .table-view .table-row-cell:hover {
+    -fx-background-color: #fef3c7;
+}
+
+.dash-table .table-row-cell:selected,
+.dash-content-card .table-view .table-row-cell:selected {
+    -fx-background-color: #bfdbfe;
+}
+
+.dash-table .table-cell,
+.dash-content-card .table-view .table-cell {
+    -fx-padding: 9;
+    -fx-text-fill: #111827;
+    -fx-font-size: 13px;
+}
+
+.dash-field-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1f2937;
+}
+
+.dash-field-value {
+    -fx-font-size: 14px;
+    -fx-text-fill: #334155;
+}
+
+.dash-price-highlight {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2563eb;
+}
+
+.dash-status-pill {
+    -fx-background-color: #dcfce7;
+    -fx-background-radius: 999;
+    -fx-padding: 5 12;
+    -fx-text-fill: #166534;
+    -fx-font-weight: bold;
+}
+
+.dash-chart {
+    -fx-background-color: rgba(255,255,255,0.78);
+    -fx-background-radius: 18;
+    -fx-padding: 18;
+}
+/* =========================
+   FIX AUCTION TABLE ALIGNMENT
+========================= */
+
+.auction-table {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: #d7dce5;
+    -fx-border-width: 1;
+    -fx-padding: 0;
+    -fx-table-cell-border-color: #e6eaf0;
+    -fx-selection-bar: #cfe2ff;
+    -fx-selection-bar-non-focused: #dbe7fb;
+    -fx-fixed-cell-size: 48;
+    -fx-font-size: 15px;
+}
+
+.auction-table .column-header-background {
+    -fx-background-color: #071a3d;
+    -fx-background-radius: 18 18 0 0;
+    -fx-padding: 0;
+}
+
+.auction-table .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent #1f3561 transparent transparent;
+    -fx-padding: 0;
+    -fx-size: 48;
+    -fx-alignment: CENTER;
+}
+
+.auction-table .column-header .label {
+    -fx-text-fill: #ffd84d;
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -fx-alignment: CENTER;
+    -fx-text-alignment: CENTER;
+    -fx-content-display: CENTER;
+    -fx-padding: 0;
+}
+
+.auction-table .table-cell {
+    -fx-text-fill: #1f2937;
+    -fx-font-size: 14px;
+    -fx-padding: 0 12 0 12;
+    -fx-border-color: transparent #e6eaf0 #e6eaf0 transparent;
+    -fx-alignment: CENTER-LEFT;
+}
+
+.auction-table .table-row-cell {
+    -fx-background-color: white;
+    -fx-cell-size: 48px;
+}
+
+.auction-table .table-row-cell:odd {
+    -fx-background-color: #f8fafc;
+}
+
+.auction-table .table-row-cell:selected {
+    -fx-background-color: #dbeafe;
+}
+
+.auction-table .scroll-bar:vertical,
+.auction-table .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.auction-table .thumb {
+    -fx-background-color: #c7cfdb;
+    -fx-background-radius: 999;
 }
