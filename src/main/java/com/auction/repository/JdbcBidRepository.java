@@ -12,7 +12,7 @@ public class JdbcBidRepository {
                         double bidAmount) {
 
         String sql =
-                "INSERT INTO bids(auction_id, bidder_name, bid_amount) VALUES (?, ?, ?)";
+                "INSERT INTO bids(product_id, user_id, bid_amount) VALUES (?, ?, ?)";
 
         try (
                 Connection conn = DBConnection.getConnection();
