@@ -3,6 +3,7 @@ package com.auction.controller;
 import com.auction.app.AppContext;
 import com.auction.model.auction.AuctionView;
 import com.auction.model.user.User;
+import com.auction.repository.JdbcBidRepository;
 import com.auction.repository.RealtimeAuctionRepository;
 import com.auction.socket.AuctionSocketClient;
 
@@ -231,6 +232,8 @@ public class DashboardController {
     // =========================
 
     private final AppContext appContext;
+    private final JdbcBidRepository bidRepository =
+            new JdbcBidRepository();
 
     private final RealtimeAuctionRepository realtimeRepo =
             new RealtimeAuctionRepository();
@@ -833,12 +836,20 @@ public class DashboardController {
         }
 
         runDatabaseAction(
-                () ->
-                        realtimeRepo.placeBid(
-                                auctionId,
-                                getCurrentUsername(),
-                                bidAmount
-                        ),
+                () -> {
+                    realtimeRepo.placeBid(
+                            auctionId,
+                            getCurrentUsername(),
+                            bidAmount
+                    );
+
+                    bidRepository.saveBid(
+                            auctionId,
+                            getCurrentUsername(),
+                            bidAmount.doubleValue()
+                    );
+                    return null;
+                },
                 () -> manualBidField.clear()
         );
     }
