@@ -27,12 +27,12 @@ GLOBAL
 }
 
 .auth-container {
-    -fx-background-color: rgba(255,255,255,0.35);
+    -fx-background-color: rgba(255,255,255,0.55);
     -fx-background-radius: 18;
     -fx-border-radius: 18;
     -fx-border-color: rgba(255,255,255,0.65);
     -fx-border-width: 1;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 24, 0.25, 0, 8);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0.18, 0, 6);
 }
 
 .auth-left-panel {
@@ -114,7 +114,7 @@ GLOBAL
     -fx-background-color: #f8fafc;
     -fx-background-radius: 8;
     -fx-border-radius: 8;
-    -fx-border-color: #9ca3af;
+    -fx-border-color: #cbd5e1;
     -fx-border-width: 1;
     -fx-padding: 3;
 }
@@ -149,6 +149,11 @@ GLOBAL
     -fx-underline: true;
     -fx-font-weight: bold;
     -fx-cursor: hand;
+}
+
+.auction-preview-card:hover {
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
 }
 
 .auth-product-box {
@@ -554,12 +559,12 @@ GLOBAL
 }
 
 .auth-primary-button {
-    -fx-background-color: linear-gradient(to bottom, #2563eb, #1d4ed8);
+    -fx-background-color: linear-gradient(to bottom, #3b82f6, #2563eb);
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-background-radius: 7;
-    -fx-padding: 9 18;
-    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.35), 8, 0.25, 0, 2);
+    -fx-background-radius: 11;
+    -fx-padding: 10 22;
+    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.25), 8, 0.25, 0, 2);
     -fx-cursor: hand;
 }
 
@@ -999,3 +1004,4 @@ GLOBAL
     -fx-background-color: #c7cfdb;
     -fx-background-radius: 999;
 }
+
