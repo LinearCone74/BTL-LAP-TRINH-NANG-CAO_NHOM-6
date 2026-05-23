@@ -1,10 +1,17 @@
 package com.auction.app;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import javafx.animation.FadeTransition;
+import javafx.util.Duration;
+import javafx.animation.TranslateTransition;
+import javafx.util.Duration;
+import javafx.scene.layout.StackPane;
 
 import java.io.IOException;
 import java.net.URL;
@@ -41,25 +48,71 @@ public class SceneNavigator {
             loader.setControllerFactory(type -> ControllerFactory.create(type, appContext));
 
             Parent root = loader.load();
-            Scene scene = new Scene(root);
+
+            root.setOpacity(0);
+
+            FadeTransition ft = new FadeTransition(Duration.millis(120), root);
+            ft.setFromValue(0);
+            ft.setToValue(1);
+            ft.play();
+
+            Scene scene = stage.getScene();
+
+            if (scene == null) {
+                scene = new Scene(root);
+                stage.setScene(scene);
+            } else {
+                slideTransition(root, true);
+            }
 
             URL cssUrl = getClass().getResource("/com/auction/style/app.css");
-            if (cssUrl != null) {
+            if (cssUrl != null && !scene.getStylesheets().contains(cssUrl.toExternalForm())) {
                 scene.getStylesheets().add(cssUrl.toExternalForm());
             }
 
-            stage.setScene(scene);
+            // ❌ XÓA hoàn toàn Platform.runLater maximize hack
             stage.show();
 
             if (maximized) {
-                Platform.runLater(() -> {
-                    stage.setMaximized(false);
-                    stage.setMaximized(true);
-                });
+                stage.setMaximized(true);
             }
 
         } catch (IOException e) {
             throw new IllegalStateException("Khong tai duoc giao dien: " + resource, e);
         }
+    }
+
+    private void slideTransition(Parent newRoot, boolean forward) {
+
+        Scene scene = stage.getScene();
+
+        if (scene == null) {
+            scene = new Scene(newRoot);
+            stage.setScene(scene);
+            return;
+        }
+
+        Parent oldRoot = scene.getRoot();
+
+        double width = stage.getWidth() > 0 ? stage.getWidth() : 1100;
+
+        StackPane container = new StackPane(oldRoot, newRoot);
+        scene.setRoot(container);
+
+        // old root out
+        TranslateTransition oldSlide = new TranslateTransition(Duration.millis(250), oldRoot);
+        oldSlide.setToX(forward ? -width : width);
+
+        // new root in
+        newRoot.setTranslateX(forward ? width : -width);
+        TranslateTransition newSlide = new TranslateTransition(Duration.millis(250), newRoot);
+        newSlide.setToX(0);
+
+        oldSlide.play();
+        newSlide.play();
+
+        oldSlide.setOnFinished(e -> {
+            container.getChildren().remove(oldRoot);
+        });
     }
 }
