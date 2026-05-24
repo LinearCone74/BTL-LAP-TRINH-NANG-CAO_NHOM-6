@@ -71,6 +71,12 @@ public class DashboardController {
     @FXML
     private Tab bidRealtimeTab;
 
+    @FXML
+    private Tab sellerTab; // Thêm khai báo Tab Seller
+
+    @FXML
+    private Tab adminTab; // Thêm khai báo Tab Admin
+
     // =========================
     // TOPBAR
     // =========================
@@ -273,7 +279,8 @@ public class DashboardController {
     @FXML
     public void initialize() {
 
-        openAllTabsForDemo();
+        // Đã tắt hàm hiển thị tất cả Tab để áp dụng phân quyền
+        // openAllTabsForDemo();
 
         setupAuctionTable();
 
@@ -299,6 +306,46 @@ public class DashboardController {
                             + current.getRole()
                             + ")"
             );
+
+            // Gọi hàm phân quyền
+            applyRolePermissions();
+        }
+    }
+
+    // =========================
+    // PHÂN QUYỀN
+    // =========================
+
+    private void applyRolePermissions() {
+        User current = appContext.getCurrentUser();
+        if (current == null || mainTabPane == null) return;
+
+        // Dùng name() để chuyển enum thành String an toàn
+        String role = current.getRole() != null ? current.getRole().name().toUpperCase() : "";
+
+        // Mặc định ẩn các tab quản trị
+        if (sellerTab != null) mainTabPane.getTabs().remove(sellerTab);
+        if (adminTab != null) mainTabPane.getTabs().remove(adminTab);
+
+        // Hiển thị tab tùy theo vai trò
+        if ("SELLER".equals(role) && sellerTab != null) {
+            mainTabPane.getTabs().add(sellerTab);
+        } else if ("ADMIN".equals(role) && adminTab != null) {
+            mainTabPane.getTabs().add(adminTab);
+        }
+
+        // ==========================================
+        // KHÓA CHỨC NĂNG ĐẤU GIÁ NẾU KHÔNG PHẢI BIDDER
+        // ==========================================
+        boolean isBidder = "BIDDER".equals(role);
+
+        if (manualBidField != null) manualBidField.setDisable(!isBidder);
+        if (autoBidMaxField != null) autoBidMaxField.setDisable(!isBidder);
+        if (autoBidIncrementField != null) autoBidIncrementField.setDisable(!isBidder);
+
+        if (!isBidder && bidMessageLabel != null) {
+            bidMessageLabel.setText("Tài khoản Seller/Admin không thể đặt bid.");
+            bidMessageLabel.setStyle("-fx-text-fill: #e53e3e; -fx-font-weight: bold;"); // Cảnh báo chữ đỏ
         }
     }
 
@@ -772,8 +819,8 @@ public class DashboardController {
 
     @FXML
     private void handleRefresh() {
-
-        openAllTabsForDemo();
+        // Đã tắt hàm mở tab demo
+        // openAllTabsForDemo();
 
         submitRefreshNow();
     }
@@ -790,14 +837,16 @@ public class DashboardController {
 
     @FXML
     private void handleFilterAuctions() {
-
-        openAllTabsForDemo();
+        // Đã tắt hàm mở tab demo
+        // openAllTabsForDemo();
 
         submitRefreshNow();
     }
 
     @FXML
     private void handlePlaceBid() {
+        // Chặn quyền Seller / Admin
+        if (!isBidderRole()) return;
 
         Integer auctionId =
                 getSelectedAuctionId();
@@ -837,7 +886,8 @@ public class DashboardController {
 
         runDatabaseAction(
                 () -> {
-                    realtimeRepo.placeBid(
+                    // Hứng kết quả trả về từ DB
+                    RealtimeAuctionRepository.BidResponse response = realtimeRepo.placeBid(
                             auctionId,
                             getCurrentUsername(),
                             bidAmount
@@ -848,7 +898,9 @@ public class DashboardController {
                             getCurrentUsername(),
                             bidAmount.doubleValue()
                     );
-                    return null;
+
+                    // Trả kết quả về thay vì null
+                    return response;
                 },
                 () -> manualBidField.clear()
         );
@@ -856,6 +908,8 @@ public class DashboardController {
 
     @FXML
     private void handleRegisterAutoBid() {
+        // Chặn quyền Seller / Admin
+        if (!isBidderRole()) return;
 
         Integer auctionId =
                 getSelectedAuctionId();
@@ -1112,6 +1166,17 @@ public class DashboardController {
     // HELPER
     // =========================
 
+    private boolean isBidderRole() {
+        User current = appContext.getCurrentUser();
+        if (current == null || current.getRole() == null) return false;
+
+        if (!"BIDDER".equalsIgnoreCase(current.getRole().name())) {
+            setBidMessage("Tài khoản Seller/Admin không thể tham gia đặt bid!");
+            return false;
+        }
+        return true;
+    }
+
     private Integer getSelectedAuctionId() {
 
         AuctionView selected =
@@ -1297,32 +1362,32 @@ public class DashboardController {
 
     @FXML
     private void handleCreateItem() {
-        System.out.println("handleCreateItem clicked");
+        System.out.println("handleCreateItem");
     }
 
     @FXML
     private void handleUpdateItem() {
-        System.out.println("handleUpdateItem clicked");
+        System.out.println("handleUpdateItem");
     }
 
     @FXML
     private void handleDeleteItem() {
-        System.out.println("handleDeleteItem clicked");
+        System.out.println("handleDeleteItem");
     }
 
     @FXML
     private void handleApproveUser() {
-        System.out.println("handleApproveUser clicked");
+        System.out.println("handleApproveUser");
     }
 
     @FXML
     private void handleLockUser() {
-        System.out.println("handleLockUser clicked");
+        System.out.println("handleLockUser");
     }
 
     @FXML
     private void handleRemoveAuction() {
-        System.out.println("handleRemoveAuction clicked");
+        System.out.println("handleRemoveAuction");
     }
 
     @FXML
