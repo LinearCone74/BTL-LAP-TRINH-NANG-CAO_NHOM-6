@@ -1,5 +1,8 @@
 package com.auction.controller;
 
+import javafx.scene.chart.XYChart;
+import java.math.BigDecimal;
+
 import com.auction.app.AppContext;
 import com.auction.model.auction.AuctionView;
 import com.auction.model.user.User;
@@ -37,6 +40,7 @@ import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -675,8 +679,54 @@ public class DashboardController {
                                 historyRows
                         )
                 );
+
+                updatePriceChart(historyRows);
             });
         });
+    }
+
+    private void updatePriceChart(
+            List<RealtimeAuctionRepository.BidHistoryRow> historyRows
+    ) {
+
+        if (priceChart == null) {
+            return;
+        }
+
+        XYChart.Series<Number, Number> series =
+                new XYChart.Series<>();
+
+        int index = 1;
+
+        // Đảo ngược để vẽ từ bid cũ -> mới
+        Collections.reverse(historyRows);
+
+        for (RealtimeAuctionRepository.BidHistoryRow row : historyRows) {
+
+            try {
+
+                String amountText = row.amount()
+                        .replace("VNĐ", "")
+                        .replace(".", "")
+                        .replace(",", "")
+                        .trim();
+
+                double amount = Double.parseDouble(amountText);
+
+                series.getData().add(
+                        new XYChart.Data<>(index++, amount)
+                );
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        priceChart.getData().clear();
+        priceChart.getData().add(series);
+
+        xAxis.setLabel("Lượt bid");
+        yAxis.setLabel("Giá");
     }
 
     // =========================
