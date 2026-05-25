@@ -56,7 +56,7 @@
                                                 <Image url="@../images/watch.png"/>
                                             </image>
                                         </ImageView>
-                                        <Label text="330,000" styleClass="auth-product-price"/>
+                                        <Label text="₫ 8,000,000" styleClass="auth-product-price"/>
                                     </children>
                                 </VBox>
 
@@ -67,7 +67,7 @@
                                                 <Image url="@../images/car.png"/>
                                             </image>
                                         </ImageView>
-                                        <Label text="330,000" styleClass="auth-product-price"/>
+                                        <Label text="₫ 28,000,000" styleClass="auth-product-price"/>
                                     </children>
                                 </VBox>
 
@@ -78,7 +78,7 @@
                                                 <Image url="@../images/diamond.png"/>
                                             </image>
                                         </ImageView>
-                                        <Label text="330,000" styleClass="auth-product-price"/>
+                                        <Label text="₫ 25,000,000" styleClass="auth-product-price"/>
                                     </children>
                                 </VBox>
                             </children>
