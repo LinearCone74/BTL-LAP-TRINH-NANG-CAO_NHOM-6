@@ -34,6 +34,7 @@ public class JdbcItemRepository {
                             "  starting_price DECIMAL(18,2) NOT NULL," +
                             "  seller_username VARCHAR(100) NOT NULL," +
                             "  metadata    TEXT," +
+                            " linked_auction_id INT NULL," +
                             "  created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP" +
                             ")"
             );
@@ -119,10 +120,17 @@ public class JdbcItemRepository {
                 }
 
                 // 3. Liên kết item với auction
-                try (PreparedStatement ps = conn.prepareStatement(
-                        "ALTER TABLE items ADD COLUMN IF NOT EXISTS linked_auction_id INT NULL")) {
-                    ps.executeUpdate();
-                } catch (Exception ignored) {}
+                try {
+                    Statement st = conn.createStatement();
+                    st.executeUpdate(
+                            "ALTER TABLE items ADD COLUMN linked_auction_id INT NULL"
+                    );
+                } catch (SQLException e) {
+                    // Column đã tồn tại thì bỏ qua
+                    if (!e.getMessage().contains("Duplicate column")) {
+                        e.printStackTrace();
+                    }
+                }
 
                 try (PreparedStatement ps = conn.prepareStatement(
                         "UPDATE items SET linked_auction_id = ? WHERE item_id = ?")) {
