@@ -111,7 +111,7 @@
                         <Separator/>
 
                         <!-- USERNAME -->
-                        <VBox spacing="6">
+                        <VBox spacing="16">
                             <children>
                                 <Label text="Tên đăng nhập" styleClass="auth-field-label"/>
 

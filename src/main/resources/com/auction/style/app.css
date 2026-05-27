@@ -27,12 +27,15 @@ GLOBAL
 }
 
 .auth-container {
-    -fx-background-color: rgba(255,255,255,0.55);
+    -fx-background-color: rgba(255,255,255,0.82);
+
     -fx-background-radius: 18;
     -fx-border-radius: 18;
-    -fx-border-color: rgba(255,255,255,0.65);
+
+    -fx-border-color: rgba(255,255,255,0.75);
     -fx-border-width: 1;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0.18, 0, 6);
+
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.10), 24, 0.12, 0, 8);
 }
 
 .auth-left-panel {
@@ -50,6 +53,11 @@ GLOBAL
 .auth-subtitle {
     -fx-font-size: 17px;
     -fx-text-fill: #f9fafb;
+}
+
+.auth-title {
+    -fx-font-family: "Segoe UI";
+    -fx-font-weight: 800;
 }
 
 .auth-desc {
@@ -78,10 +86,14 @@ GLOBAL
     -fx-border-width: 1;
 }
 
-.auth-title {
-    -fx-font-family: "Georgia";
-    -fx-font-size: 42px;
-    -fx-text-fill: #111827;
+.root {
+    -fx-font-family: "Segoe UI";
+}
+
+.auth-form-title {
+    -fx-font-size: 48px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #0f172a;
 }
 
 .auth-small-text {
@@ -96,18 +108,22 @@ GLOBAL
 }
 
 .auth-input {
-    -fx-background-color: #f8fafc;
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-border-color: #9ca3af;
-    -fx-border-width: 1;
-    -fx-padding: 9 12;
+    -fx-background-color: #f9fafb;
+
+    -fx-border-color: #d1d5db;
+    -fx-border-width: 0.8;
+
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+
+    -fx-padding: 11 14;
+
     -fx-font-size: 14px;
 }
 
 .auth-input:focused {
     -fx-border-color: #2563eb;
-    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.35), 8, 0.2, 0, 0);
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.12), 24, 0.15, 0, 8);
 }
 
 .auth-combo {
@@ -427,7 +443,8 @@ GLOBAL
 
 .auth-luxury-root {
     -fx-background-color: #f2f2f2;
-    -fx-background-image: url("../images/marble-bg.jpg");
+    -fx-background-color:
+            linear-gradient(to bottom right, #f8fafc, #eef2f7);
     -fx-background-size: cover;
     -fx-background-position: center center;
     -fx-font-family: "Segoe UI", "Arial";
@@ -503,7 +520,7 @@ GLOBAL
 }
 
 .auth-luxury-form {
-    -fx-background-color: linear-gradient(to bottom right, #fff7e6, #f3e4c9);
+    -fx-background-color: linear-gradient(to bottom right, #ffffff, #f8fafc);
     -fx-background-radius: 13;
     -fx-border-radius: 13;
     -fx-border-color: rgba(126, 91, 30, 0.30);
@@ -529,18 +546,18 @@ GLOBAL
 }
 
 .auth-input {
-    -fx-background-color: #f8faff;
-    -fx-background-radius: 6;
-    -fx-border-radius: 6;
-    -fx-border-color: #8b8f98;
-    -fx-border-width: 1;
-    -fx-padding: 8 10;
+    -fx-background-color: #f9fafb;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #d1d5db;
+    -fx-border-width: 0.8;
+    -fx-padding: 11 14;
     -fx-font-size: 14px;
 }
 
 .auth-input:focused {
-    -fx-border-color: #2563eb;
-    -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.35), 8, 0.20, 0, 0);
+    -fx-border-color: #3b82f6;
+    -fx-effect: dropshadow(gaussian, rgba(59,130,246,0.25), 10, 0.2, 0, 0);
 }
 
 .auth-combo {
@@ -579,6 +596,18 @@ GLOBAL
     -fx-background-radius: 7;
     -fx-padding: 9 18;
     -fx-cursor: hand;
+}
+
+.auth-secondary-button:hover {
+    -fx-background-color: linear-gradient(to bottom, #4b5563, #374151);
+}
+
+.auth-secondary-button {
+    -fx-background-color: linear-gradient(to bottom, #6b7280, #4b5563);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 10 22;
 }
 
 .auth-secondary-button:hover {
@@ -1005,3 +1034,9 @@ GLOBAL
     -fx-background-radius: 999;
 }
 
+.shared-background {
+    -fx-background-image: url("../images/marble-bg.jpg");
+
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}
