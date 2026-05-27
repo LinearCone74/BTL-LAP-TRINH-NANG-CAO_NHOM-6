@@ -64,6 +64,8 @@
     <center>
         <TabPane fx:id="mainTabPane" tabClosingPolicy="UNAVAILABLE" styleClass="dash-tabs">
             <tabs>
+
+                <!-- ==================== TAB 1: PHIÊN ĐẤU GIÁ ==================== -->
                 <Tab text="Phiên đấu giá">
                     <content>
                         <BorderPane styleClass="dash-content-card">
@@ -106,6 +108,7 @@
                     </content>
                 </Tab>
 
+                <!-- ==================== TAB 2: ĐẶT BID REALTIME ==================== -->
                 <Tab fx:id="bidRealtimeTab" text="Đặt bid realtime">
                     <content>
                         <VBox spacing="10" style="-fx-background-color: transparent;">
@@ -215,6 +218,7 @@
                     </content>
                 </Tab>
 
+                <!-- ==================== TAB 3: SELLER ==================== -->
                 <Tab fx:id="sellerTab" text="Seller">
                     <content>
                         <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;">
@@ -262,16 +266,18 @@
                                             <Label fx:id="sellerMessageLabel" styleClass="success-label"/>
                                         </HBox>
 
+                                        <!-- *** THAY ĐỔI DUY NHẤT: thêm fx:id vào 3 cột *** -->
                                         <TableView fx:id="sellerItemTable" VBox.vgrow="ALWAYS" prefHeight="250" styleClass="dash-table">
                                             <columns>
-                                                <TableColumn text="Sản phẩm" prefWidth="400"/>
-                                                <TableColumn text="Loại" prefWidth="200"/>
-                                                <TableColumn text="Giá mở phiên" prefWidth="200"/>
+                                                <TableColumn fx:id="colSellerItemName" text="Sản phẩm" prefWidth="400"/>
+                                                <TableColumn fx:id="colSellerItemCategory" text="Loại" prefWidth="200"/>
+                                                <TableColumn fx:id="colSellerItemPrice" text="Giá mở phiên" prefWidth="200"/>
                                             </columns>
                                             <columnResizePolicy>
                                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                                             </columnResizePolicy>
                                         </TableView>
+
                                     </children>
                                 </VBox>
                             </content>
@@ -279,6 +285,7 @@
                     </content>
                 </Tab>
 
+                <!-- ==================== TAB 4: ADMIN ==================== -->
                 <Tab fx:id="adminTab" text="Admin">
                     <content>
                         <VBox spacing="20" styleClass="dash-content-card">
