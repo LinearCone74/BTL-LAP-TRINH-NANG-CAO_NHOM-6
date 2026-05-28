@@ -221,6 +221,8 @@
                                                                         <Image url="@../images/iphone_xs_max.png"/>
                                                                     </image>
 
+
+
                                                                 </ImageView>
 
                                                             </children>
@@ -311,6 +313,16 @@
                                     </padding>
                                     <children>
                                         <Label text="Quản lý sản phẩm đấu giá" styleClass="dash-page-title" style="-fx-text-fill: black;"/>
+
+                                        <ImageView fx:id="sellerProductImageView"
+                                                   fitWidth="430"
+                                                   fitHeight="250"
+                                                   preserveRatio="false"
+                                                   smooth="true">
+                                            <image>
+                                                <Image url="@../images/iphone_xs_max.png"/>
+                                            </image>
+                                        </ImageView>
 
                                         <GridPane hgap="20" vgap="16">
                                             <columnConstraints>
