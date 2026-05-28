@@ -758,14 +758,23 @@ GLOBAL
 }
 
 .dash-content-card {
-    -fx-background-color: rgba(255, 247, 230, 0.94);
+    -fx-background-color: rgba(220, 230, 242, 0.96);
+
     -fx-background-radius: 0 20 20 20;
     -fx-border-radius: 0 20 20 20;
-    -fx-border-color: rgba(120, 80, 20, 0.25);
-    -fx-border-width: 1;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.22), 22, 0.25, 0, 7);
-}
 
+    -fx-border-color: rgba(122, 146, 172, 0.35);
+    -fx-border-width: 1;
+
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0,0,0,0.18),
+            22,
+            0.25,
+            0,
+            7
+    );
+}
 .dash-scroll {
     -fx-background-color: transparent;
     -fx-background: transparent;
@@ -1046,4 +1055,15 @@ GLOBAL
 
     -fx-background-size: cover;
     -fx-background-position: center;
+}
+
+.dash-tabs .tab:focused,
+.dash-tabs .tab:selected:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.dash-tabs .tab .focus-indicator {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
 }
