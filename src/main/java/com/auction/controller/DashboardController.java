@@ -3,6 +3,9 @@ package com.auction.controller;
 import javafx.scene.chart.XYChart;
 import java.math.BigDecimal;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 import com.auction.app.AppContext;
 import com.auction.model.auction.AuctionView;
 import com.auction.model.user.User;
@@ -147,6 +150,10 @@ public class DashboardController {
 
     @FXML
     private Label auctionStatusLabel;
+
+    @FXML
+    private ImageView productImageView;
+
 
     // =========================
     // BID
@@ -782,7 +789,64 @@ public class DashboardController {
 
         endTimeLabel.setText(formatDateTime(auction.getEndTimeText()));
         auctionStatusLabel.setText(auction.getStatus().toString());
+
+        // =========================
+        // ẢNH SẢN PHẨM
+        // =========================
+
+        String imageName;
+
+        System.out.println(auction.getTitle());
+        switch (auction.getTitle()) {
+
+            case "IP XS max":
+                imageName = "iphone_xs_max.png";
+                break;
+
+            case "Dép tổ ong":
+                imageName = "dep_to_ong.png";
+                break;
+
+            case "wave s110":
+                imageName = "wave_s110.png";
+                break;
+
+            case "Toyota Inova":
+                imageName = "toyota_innova.png";
+                break;
+
+            case "Tai nghe Sony WH-1000XM5":
+                imageName = "watch.png";
+                break;
+
+            case "iPhone 15 Pro Max":
+                imageName = "car.png";
+                break;
+
+            case "Laptop Gaming Asus":
+                imageName = "diamond.png";
+                break;
+
+            case "ip 36 prm":
+                imageName = "iphone_36_pro_max.png";
+                break;
+
+            default:
+                imageName = "car.png";
+                break;
+        }
+
+        Image image = new Image(
+                Objects.requireNonNull(
+                        getClass().getResourceAsStream(
+                                "/com/auction/images/" + imageName
+                        )
+                )
+        );
+
+        productImageView.setImage(image);
     }
+
 
     // =========================
     // BUTTON EVENTS
@@ -802,7 +866,40 @@ public class DashboardController {
 
     @FXML
     private void handleFilterAuctions() {
-        submitRefreshNow();
+
+        String keyword = searchField == null
+                ? ""
+                : searchField.getText().toLowerCase().trim();
+
+        String selectedStatus = statusFilterChoiceBox == null
+                ? "Tất cả"
+                : statusFilterChoiceBox.getValue();
+
+        List<AuctionView> filtered = realtimeRepo.findAll().stream()
+
+                .filter(auction -> {
+
+                    boolean matchesKeyword =
+                            keyword.isEmpty()
+                                    || auction.getTitle()
+                                    .toLowerCase()
+                                    .contains(keyword);
+
+                    boolean matchesStatus =
+                            selectedStatus == null
+                                    || selectedStatus.equals("Tất cả")
+                                    || auction.getStatus()
+                                    .toString()
+                                    .equalsIgnoreCase(selectedStatus);
+
+                    return matchesKeyword && matchesStatus;
+                })
+
+                .toList();
+
+        auctionTable.setItems(
+                FXCollections.observableArrayList(filtered)
+        );
     }
 
     @FXML

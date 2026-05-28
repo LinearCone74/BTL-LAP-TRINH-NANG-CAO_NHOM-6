@@ -123,30 +123,112 @@
                                                 <Insets top="12" right="16" bottom="12" left="16"/>
                                             </padding>
                                             <children>
-                                                <Label text="Chi tiết phiên đấu giá" styleClass="dash-section-title"/>
-                                                <GridPane hgap="12" vgap="5">
-                                                    <columnConstraints>
-                                                        <ColumnConstraints percentWidth="30"/>
-                                                        <ColumnConstraints percentWidth="70"/>
-                                                    </columnConstraints>
+
+                                                <Label text="Chi tiết phiên đấu giá"
+                                                       styleClass="dash-section-title"/>
+
+                                                <HBox spacing="30"
+                                                      alignment="CENTER_LEFT">
+
                                                     <children>
-                                                        <Label text="Sản phẩm" GridPane.rowIndex="0"/>
-                                                        <Label fx:id="itemNameLabel" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-font-weight: bold;"/>
-                                                        <Label text="Mô tả" GridPane.rowIndex="1"/>
-                                                        <Label fx:id="itemDescriptionLabel" wrapText="true" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-                                                        <Label text="Giá hiện tại" GridPane.rowIndex="2"/>
-                                                        <Label fx:id="currentPriceLabel" GridPane.rowIndex="2" GridPane.columnIndex="1" style="-fx-text-fill: #b31b1b; -fx-font-weight: bold;"/>
-                                                        <Label text="Người dẫn đầu" GridPane.rowIndex="3"/>
-                                                        <Label fx:id="leaderLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-                                                        <Label text="Bắt đầu" GridPane.rowIndex="4"/>
-                                                        <Label fx:id="startTimeLabel" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-                                                        <Label text="Kết thúc" GridPane.rowIndex="5"/>
-                                                        <Label fx:id="endTimeLabel" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-                                                        <Label text="Trạng thái" GridPane.rowIndex="6"/>
-                                                        <Label fx:id="auctionStatusLabel" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
-                                                        <Label fx:id="startingPriceLabel" visible="false" managed="false"/>
+
+                                                        <!-- THÔNG TIN SẢN PHẨM -->
+                                                        <GridPane hgap="12"
+                                                                  vgap="5">
+
+                                                            <columnConstraints>
+                                                                <ColumnConstraints percentWidth="30"/>
+                                                                <ColumnConstraints percentWidth="70"/>
+                                                            </columnConstraints>
+
+                                                            <children>
+
+                                                                <Label text="Sản phẩm"
+                                                                       GridPane.rowIndex="0"/>
+
+                                                                <Label fx:id="itemNameLabel"
+                                                                       GridPane.rowIndex="0"
+                                                                       GridPane.columnIndex="1"
+                                                                       style="-fx-font-weight: bold;"/>
+
+                                                                <Label text="Mô tả"
+                                                                       GridPane.rowIndex="1"/>
+
+                                                                <Label fx:id="itemDescriptionLabel"
+                                                                       wrapText="true"
+                                                                       GridPane.rowIndex="1"
+                                                                       GridPane.columnIndex="1"/>
+
+                                                                <Label text="Giá hiện tại"
+                                                                       GridPane.rowIndex="2"/>
+
+                                                                <Label fx:id="currentPriceLabel"
+                                                                       GridPane.rowIndex="2"
+                                                                       GridPane.columnIndex="1"
+                                                                       style="-fx-text-fill: #b31b1b; -fx-font-weight: bold;"/>
+
+                                                                <Label text="Người dẫn đầu"
+                                                                       GridPane.rowIndex="3"/>
+
+                                                                <Label fx:id="leaderLabel"
+                                                                       GridPane.rowIndex="3"
+                                                                       GridPane.columnIndex="1"/>
+
+                                                                <Label text="Bắt đầu"
+                                                                       GridPane.rowIndex="4"/>
+
+                                                                <Label fx:id="startTimeLabel"
+                                                                       GridPane.rowIndex="4"
+                                                                       GridPane.columnIndex="1"/>
+
+                                                                <Label text="Kết thúc"
+                                                                       GridPane.rowIndex="5"/>
+
+                                                                <Label fx:id="endTimeLabel"
+                                                                       GridPane.rowIndex="5"
+                                                                       GridPane.columnIndex="1"/>
+
+                                                                <Label text="Trạng thái"
+                                                                       GridPane.rowIndex="6"/>
+
+                                                                <Label fx:id="auctionStatusLabel"
+                                                                       GridPane.rowIndex="6"
+                                                                       GridPane.columnIndex="1"/>
+
+                                                                <Label fx:id="startingPriceLabel"
+                                                                       visible="false"
+                                                                       managed="false"/>
+
+                                                            </children>
+                                                        </GridPane>
+
+                                                        <!-- ẢNH SẢN PHẨM -->
+                                                        <StackPane prefWidth="430"
+                                                                   prefHeight="250"
+                                                                   style="-fx-background-color: white;
+                              -fx-background-radius: 20;
+                              -fx-padding: 6;">
+
+                                                            <children>
+
+                                                                <ImageView fx:id="productImageView"
+                                                                           fitWidth="430"
+                                                                           fitHeight="250"
+                                                                           preserveRatio="false"
+                                                                           smooth="true">
+
+                                                                    <image>
+                                                                        <Image url="@../images/iphone_xs_max.png"/>
+                                                                    </image>
+
+                                                                </ImageView>
+
+                                                            </children>
+                                                        </StackPane>
+
                                                     </children>
-                                                </GridPane>
+                                                </HBox>
+
                                             </children>
                                         </VBox>
 
