@@ -205,9 +205,7 @@
                                                         <!-- ẢNH SẢN PHẨM -->
                                                         <StackPane prefWidth="430"
                                                                    prefHeight="250"
-                                                                   style="-fx-background-color: white;
-                              -fx-background-radius: 20;
-                              -fx-padding: 6;">
+                                                                   style="-fx-background-color: transparent;">
 
                                                             <children>
 
