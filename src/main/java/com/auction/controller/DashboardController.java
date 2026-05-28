@@ -101,6 +101,9 @@ public class DashboardController {
     @FXML
     private ChoiceBox<String> statusFilterChoiceBox;
 
+    @FXML
+    private ChoiceBox<String> sortChoiceBox;
+
     // =========================
     // AUCTION TABLE
     // =========================
@@ -388,6 +391,18 @@ public class DashboardController {
                     )
             );
             statusFilterChoiceBox.setValue("Tất cả");
+        }
+
+        if (sortChoiceBox != null) {
+            sortChoiceBox.setItems(
+                    FXCollections.observableArrayList(
+                            "Mặc định",
+                            "Tên A-Z",
+                            "Tên Z-A"
+                    )
+            );
+
+            sortChoiceBox.setValue("Mặc định");
         }
 
         if (itemTypeChoiceBox != null) {
@@ -876,30 +891,49 @@ public class DashboardController {
 
         String keyword = searchField == null
                 ? ""
-                : searchField.getText().toLowerCase().trim();
+                : searchField.getText().trim().toLowerCase();
 
         String selectedStatus = statusFilterChoiceBox == null
                 ? "Tất cả"
                 : statusFilterChoiceBox.getValue();
 
+        String sortOption = sortChoiceBox == null
+                ? "Mặc định"
+                : sortChoiceBox.getValue();
+
         List<AuctionView> filtered = realtimeRepo.findAll().stream()
 
-                .filter(auction -> {
+                // LỌC TÊN
+                .filter(auction ->
+                        keyword.isEmpty()
+                                || auction.getTitle()
+                                .toLowerCase()
+                                .contains(keyword)
+                )
 
-                    boolean matchesKeyword =
-                            keyword.isEmpty()
-                                    || auction.getTitle()
-                                    .toLowerCase()
-                                    .contains(keyword);
+                // LỌC TRẠNG THÁI
+                .filter(auction ->
+                        selectedStatus == null
+                                || selectedStatus.equals("Tất cả")
+                                || auction.getStatus()
+                                .toString()
+                                .equalsIgnoreCase(selectedStatus)
+                )
 
-                    boolean matchesStatus =
-                            selectedStatus == null
-                                    || selectedStatus.equals("Tất cả")
-                                    || auction.getStatus()
-                                    .toString()
-                                    .equalsIgnoreCase(selectedStatus);
+                // SẮP XẾP
+                .sorted((a, b) -> {
 
-                    return matchesKeyword && matchesStatus;
+                    if ("Tên A-Z".equals(sortOption)) {
+                        return a.getTitle()
+                                .compareToIgnoreCase(b.getTitle());
+                    }
+
+                    if ("Tên Z-A".equals(sortOption)) {
+                        return b.getTitle()
+                                .compareToIgnoreCase(a.getTitle());
+                    }
+
+                    return 0;
                 })
 
                 .toList();
