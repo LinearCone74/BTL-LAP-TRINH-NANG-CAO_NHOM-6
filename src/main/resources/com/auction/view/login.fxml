@@ -19,6 +19,7 @@
               spacing="16"
               maxWidth="980"
               maxHeight="600"
+              translateY="40"
               styleClass="auth-luxury-shell">
 
             <children>
