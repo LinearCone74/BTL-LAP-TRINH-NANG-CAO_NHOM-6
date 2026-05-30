@@ -111,10 +111,18 @@
                 <!-- ==================== TAB 2: ĐẶT BID REALTIME ==================== -->
                 <Tab fx:id="bidRealtimeTab" text="Đặt bid realtime">
                     <content>
-                        <VBox spacing="10" style="-fx-background-color: transparent;">
+                    <ScrollPane fitToWidth="true"
+                                hbarPolicy="NEVER">
+
+                    <content>
+
+                        <VBox spacing="10"
+                              style="-fx-background-color: transparent;">
+
                             <padding>
                                 <Insets top="10" right="16" bottom="10" left="16"/>
                             </padding>
+
                             <children>
                                 <HBox spacing="12" VBox.vgrow="NEVER">
                                     <children>
@@ -276,30 +284,47 @@
                                                 </TableView>
                                             </children>
                                         </VBox>
+                                        <VBox spacing="8"
+                                              styleClass="dash-content-card"
+                                              HBox.hgrow="ALWAYS"
+                                              prefWidth="450">
 
-                                        <VBox spacing="8" styleClass="dash-content-card" HBox.hgrow="ALWAYS" prefWidth="450">
                                             <padding>
                                                 <Insets top="12" right="16" bottom="12" left="16"/>
                                             </padding>
+
                                             <children>
-                                                <Label text="Biểu đồ realtime" styleClass="dash-section-title"/>
-                                                <LineChart fx:id="priceChart" animated="false" legendVisible="false" VBox.vgrow="ALWAYS" style="-fx-padding: -10;">
+
+                                                <Label text="Biểu đồ giá bid"
+                                                       styleClass="dash-section-title"/>
+
+                                                <LineChart fx:id="priceChart"
+                                                           animated="false"
+                                                           createSymbols="true"
+                                                           VBox.vgrow="ALWAYS">
+
                                                     <xAxis>
-                                                        <NumberAxis fx:id="xAxis" label="Lượt bid"/>
+                                                        <NumberAxis fx:id="xAxis"/>
                                                     </xAxis>
+
                                                     <yAxis>
-                                                        <NumberAxis fx:id="yAxis" label="Giá"/>
+                                                        <NumberAxis fx:id="yAxis"/>
                                                     </yAxis>
+
                                                 </LineChart>
+
                                             </children>
+
                                         </VBox>
                                     </children>
                                 </HBox>
                             </children>
                         </VBox>
+
+                    </content>
+                    </ScrollPane>
                     </content>
                 </Tab>
-
                 <!-- ==================== TAB 3: SELLER ==================== -->
                 <Tab fx:id="sellerTab" text="Seller">
                     <content>
