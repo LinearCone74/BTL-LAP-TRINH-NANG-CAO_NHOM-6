@@ -157,9 +157,6 @@ public class DashboardController {
     @FXML
     private ImageView productImageView;
 
-    @FXML
-    private ImageView sellerProductImageView;
-
 
     // =========================
     // BID
@@ -864,9 +861,6 @@ public class DashboardController {
 
         productImageView.setImage(image);
 
-        if (sellerProductImageView != null) {
-            sellerProductImageView.setImage(image);
-        }
     }
 
 
