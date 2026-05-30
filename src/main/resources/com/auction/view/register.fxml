@@ -99,12 +99,11 @@
                 </VBox>
 
                 <!-- RIGHT REGISTER FORM -->
-                <VBox alignment="CENTER_LEFT"
-                      spacing="7"
+                <VBox alignment="CENTER"
+                      spacing="10"
                       prefWidth="500"
                       prefHeight="560"
                       styleClass="auth-luxury-form">
-
                     <children>
                         <Label text="Đăng ký tài khoản" styleClass="auth-form-title"/>
 
