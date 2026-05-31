@@ -253,8 +253,8 @@ Nếu có người đặt giá sát thời điểm kết thúc phiên đấu gi�
 
 ## 13. Link báo cáo PDF và video demo
 
-- Link báo cáo PDF: Cập nhật sau
-- Link video demo: Cập nhật sau
+- Link báo cáo PDF: https://drive.google.com/file/d/1pcynLo3Qpg-2DlMlxzYPg9XzER4HVcmQ/view?usp=sharing
+- Link video demo: https://drive.google.com/file/d/1yudbULQLKPLk5tVLgvNxgr5tIszObH1H/view?usp=sharing
 
 ---
 
